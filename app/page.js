@@ -2,42 +2,16 @@
 
 import Link from 'next/link'
 
-/* ─── Islamic 8-Pointed Star Monogram ──────────────────────────── */
+/* ─── Double-Ring Monogram ──────────────────────────────────────── */
 function MonogramSVG() {
-  // Center (150,150), outer-r=90, inner-r=55
-  // Outer tips at 0°,45°,…  Inner vertices at 22.5°,67.5°,…  (from 12-o'clock, CW)
-  const star =
-    '150,60 171.1,99.2 213.6,86.4 200.8,128.9 240,150 200.8,171.1 ' +
-    '213.6,213.6 171.1,200.8 150,240 128.9,200.8 86.4,213.6 99.2,171.1 ' +
-    '60,150 99.2,128.9 86.4,86.4 128.9,99.2'
-
-  const outerTips = [
-    [150, 60], [213.6, 86.4], [240, 150], [213.6, 213.6],
-    [150, 240], [86.4, 213.6], [60, 150], [86.4, 86.4],
-  ]
-  const innerVerts = [
-    [171.1, 99.2], [200.8, 128.9], [200.8, 171.1], [171.1, 200.8],
-    [128.9, 200.8], [99.2, 171.1], [99.2, 128.9], [128.9, 99.2],
-  ]
-
   return (
     <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
       {/* Outer dashed ring */}
       <circle cx="150" cy="150" r="138" fill="none" stroke="#C9A84C" strokeWidth="0.7" strokeDasharray="4 9" opacity="0.45" />
-      {/* Solid ring */}
-      <circle cx="150" cy="150" r="123" fill="none" stroke="#C9A84C" strokeWidth="0.8" opacity="0.5" />
-      {/* 8-pointed Islamic star */}
-      <polygon points={star} fill="none" stroke="#C9A84C" strokeWidth="1.6" opacity="0.88" />
-      {/* Outer tip jewels */}
-      {outerTips.map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r="2.8" fill="#C9A84C" opacity="0.75" />
-      ))}
-      {/* Inner vertex dots */}
-      {innerVerts.map(([x, y], i) => (
-        <circle key={i} cx={x} cy={y} r="1.3" fill="#C9A84C" opacity="0.45" />
-      ))}
-      {/* Central medallion */}
-      <circle cx="150" cy="150" r="52" fill="rgba(253,250,242,0.92)" stroke="#C9A84C" strokeWidth="0.9" opacity="0.9" />
+      {/* Outer solid ring */}
+      <circle cx="150" cy="150" r="124" fill="none" stroke="#C9A84C" strokeWidth="1" opacity="0.6" />
+      {/* Inner ring — close to outer, creating a double-band border */}
+      <circle cx="150" cy="150" r="112" fill="rgba(253,250,242,0.92)" stroke="#C9A84C" strokeWidth="0.8" opacity="0.55" />
     </svg>
   )
 }
@@ -161,12 +135,10 @@ export default function LandingPage() {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <span style={{
-            fontFamily: 'var(--font-cormorant)',
+            fontFamily: 'var(--font-lavishly)',
             color: '#C9A84C',
-            fontSize: '3rem',
-            fontStyle: 'italic',
-            fontWeight: 300,
-            letterSpacing: '0.02em',
+            fontSize: '3.6rem',
+            fontWeight: 400,
             lineHeight: 1,
             userSelect: 'none',
           }}>

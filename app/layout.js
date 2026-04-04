@@ -1,4 +1,4 @@
-import { Amiri, Cormorant_Garamond, Noto_Sans_Malayalam } from 'next/font/google'
+import { Amiri, Cormorant_Garamond, Noto_Sans_Malayalam, Lavishly_Yours } from 'next/font/google'
 import './globals.css'
 
 const amiri = Amiri({
@@ -13,6 +13,13 @@ const cormorant = Cormorant_Garamond({
   weight: ['300', '400', '500', '600', '700'],
   style: ['normal', 'italic'],
   variable: '--font-cormorant',
+  display: 'swap',
+})
+
+const lavishlyYours = Lavishly_Yours({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-lavishly',
   display: 'swap',
 })
 
@@ -50,7 +57,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${amiri.variable} ${cormorant.variable} ${notoMalayalam.variable}`}>
+      <body className={`${amiri.variable} ${cormorant.variable} ${notoMalayalam.variable} ${lavishlyYours.variable}`}>
         {children}
       </body>
     </html>

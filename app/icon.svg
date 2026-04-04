@@ -1,23 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <!-- Background -->
   <circle cx="32" cy="32" r="32" fill="#FDFAF2"/>
-  <!-- 8-pointed Islamic star outline -->
-  <polygon
-    points="32,7 35.8,19.5 48,16 40,26 52,32 40,38 48,48 35.8,44.5 32,57 28.2,44.5 16,48 24,38 12,32 24,26 16,16 28.2,19.5"
-    fill="none"
-    stroke="#C9A84C"
-    stroke-width="1.2"
-    opacity="0.75"
-  />
-  <!-- Inner circle -->
-  <circle cx="32" cy="32" r="14" fill="none" stroke="#C9A84C" stroke-width="0.7" opacity="0.6"/>
-  <!-- F&amp;N monogram -->
+  <!-- Outer dashed ring -->
+  <circle cx="32" cy="32" r="30" fill="none" stroke="#C9A84C" stroke-width="0.6" stroke-dasharray="3 6" opacity="0.45"/>
+  <!-- Outer solid ring -->
+  <circle cx="32" cy="32" r="27" fill="none" stroke="#C9A84C" stroke-width="0.9" opacity="0.6"/>
+  <!-- Inner ring (close to outer — double-band) -->
+  <circle cx="32" cy="32" r="24" fill="rgba(253,250,242,0.92)" stroke="#C9A84C" stroke-width="0.7" opacity="0.55"/>
+  <!-- F&amp;N monogram — cursive script -->
   <text
-    x="32" y="37"
-    font-family="Georgia, 'Times New Roman', serif"
-    font-size="12"
+    x="32" y="38"
+    font-family="'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif"
+    font-size="13"
     font-style="italic"
-    font-weight="300"
+    font-weight="400"
     fill="#C9A84C"
     text-anchor="middle"
     letter-spacing="0.5"
