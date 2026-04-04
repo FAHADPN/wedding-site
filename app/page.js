@@ -40,7 +40,7 @@ function SideCard({ title, arabicText, subtitle, time, side }) {
         width: '224px',
         padding: '36px 28px',
         border: '1px solid rgba(201,168,76,0.32)',
-        backgroundColor: isBride ? 'rgba(255,251,247,0.96)' : 'rgba(247,250,255,0.96)',
+        backgroundColor: isBride ? 'rgba(255,251,247,0.96)' : 'rgba(254,249,238,0.96)',
         position: 'relative',
         cursor: 'pointer',
       }}

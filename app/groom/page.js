@@ -126,10 +126,10 @@ export default function GroomPage() {
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: '#F8FBFF',
+        backgroundColor: '#FEF9EE',
         backgroundImage:
-          'repeating-linear-gradient(45deg,transparent 0px,transparent 39px,rgba(201,168,76,0.045) 39px,rgba(201,168,76,0.045) 40px),' +
-          'repeating-linear-gradient(-45deg,transparent 0px,transparent 39px,rgba(201,168,76,0.045) 39px,rgba(201,168,76,0.045) 40px)',
+          'repeating-linear-gradient(45deg,transparent 0px,transparent 39px,rgba(201,168,76,0.06) 39px,rgba(201,168,76,0.06) 40px),' +
+          'repeating-linear-gradient(-45deg,transparent 0px,transparent 39px,rgba(201,168,76,0.06) 39px,rgba(201,168,76,0.06) 40px)',
       }}
     >
       {/* ── Top Nav ── */}
@@ -137,7 +137,7 @@ export default function GroomPage() {
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         padding: '14px 24px',
-        background: 'rgba(248,251,255,0.92)',
+        background: 'rgba(254,249,238,0.92)',
         backdropFilter: 'blur(8px)',
         borderBottom: '1px solid rgba(201,168,76,0.15)',
       }}>
@@ -274,7 +274,7 @@ export default function GroomPage() {
           padding: '32px 28px',
           marginBottom: '36px',
           position: 'relative',
-          background: 'rgba(201,168,76,0.025)',
+          background: 'rgba(201,168,76,0.04)',
         }}>
           {[
             { top: '8px', left: '8px',   borderTop: '1px solid rgba(201,168,76,0.4)', borderLeft: '1px solid rgba(201,168,76,0.4)'   },
