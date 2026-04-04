@@ -23,10 +23,28 @@ const notoMalayalam = Noto_Sans_Malayalam({
   display: 'swap',
 })
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
+  : new URL('http://localhost:3000')
+
 export const metadata = {
+  metadataBase: baseUrl,
   title: 'Fahad & Nadha — Wedding Invitation',
   description:
     'Join us to celebrate the blessed union of Fahad P N and Nadha Shirin K N on 26th July 2026.',
+  openGraph: {
+    title: 'Fahad & Nadha — Wedding Invitation',
+    description:
+      'Join us to celebrate the blessed union of Fahad P N and Nadha Shirin K N on 26th July 2026.',
+    type: 'website',
+    locale: 'en_IN',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Fahad & Nadha — Wedding Invitation',
+    description:
+      'Join us to celebrate the blessed union of Fahad P N and Nadha Shirin K N on 26th July 2026.',
+  },
 }
 
 export default function RootLayout({ children }) {
