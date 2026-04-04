@@ -129,21 +129,43 @@ export default function LandingPage() {
         <div style={{ position: 'absolute', inset: 0 }}>
           <MonogramSVG />
         </div>
-        {/* F & N text */}
+        {/* F & N — diagonal monogram */}
         <div style={{
           position: 'absolute', inset: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <span style={{
-            fontFamily: 'var(--font-lavishly)',
-            color: '#C9A84C',
-            fontSize: '3.6rem',
-            fontWeight: 400,
-            lineHeight: 1,
-            userSelect: 'none',
-          }}>
-            F&amp;N
-          </span>
+          {/* 96×96 relative box — corners sit at ~68px from centre, inside the inner circle (~82px radius) */}
+          <div style={{ position: 'relative', width: '96px', height: '96px', userSelect: 'none' }}>
+            {/* F — top-left */}
+            <span style={{
+              position: 'absolute', top: 0, left: 0,
+              fontFamily: 'var(--font-lavishly)',
+              color: '#C9A84C',
+              fontSize: '3rem',
+              fontWeight: 400,
+              lineHeight: 1,
+            }}>F</span>
+            {/* & — centre */}
+            <span style={{
+              position: 'absolute', top: '50%', left: '50%',
+              transform: 'translate(-50%, -42%)',
+              fontFamily: 'var(--font-lavishly)',
+              color: '#C9A84C',
+              fontSize: '1.8rem',
+              fontWeight: 400,
+              lineHeight: 1,
+              opacity: 0.88,
+            }}>&amp;</span>
+            {/* N — bottom-right */}
+            <span style={{
+              position: 'absolute', bottom: 0, right: 0,
+              fontFamily: 'var(--font-lavishly)',
+              color: '#C9A84C',
+              fontSize: '3rem',
+              fontWeight: 400,
+              lineHeight: 1,
+            }}>N</span>
+          </div>
         </div>
       </div>
 
