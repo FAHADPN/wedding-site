@@ -1,0 +1,40 @@
+import { Amiri, Cormorant_Garamond, Noto_Sans_Malayalam } from 'next/font/google'
+import './globals.css'
+
+const amiri = Amiri({
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '700'],
+  variable: '--font-amiri',
+  display: 'swap',
+})
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant',
+  display: 'swap',
+})
+
+const notoMalayalam = Noto_Sans_Malayalam({
+  subsets: ['malayalam'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-noto-ml',
+  display: 'swap',
+})
+
+export const metadata = {
+  title: 'Fahad & Nadha — Wedding Invitation',
+  description:
+    'Join us to celebrate the blessed union of Fahad P N and Nadha Shirin K N on 26th July 2026.',
+}
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className={`${amiri.variable} ${cormorant.variable} ${notoMalayalam.variable}`}>
+        {children}
+      </body>
+    </html>
+  )
+}

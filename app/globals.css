@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8d5a3;
+  --gold-dark: #8b6914;
+  --gold-pale: #f5edd8;
+  --gold-muted: #9b7b3a;
+  --ivory: #fdfaf2;
+  --text-dark: #2c1810;
+  --text-soft: #5c4033;
+  --text-muted: #9b7b3a;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--ivory);
+  color: var(--text-dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Islamic Geometric Background ───────────────────────── */
+.islamic-bg {
+  background-color: #fdfaf2;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0px,
+      transparent 39px,
+      rgba(201, 168, 76, 0.055) 39px,
+      rgba(201, 168, 76, 0.055) 40px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0px,
+      transparent 39px,
+      rgba(201, 168, 76, 0.055) 39px,
+      rgba(201, 168, 76, 0.055) 40px
+    );
+}
+
+/* ─── Keyframes ──────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(36px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.72); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+@keyframes slowSpin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.75; }
+  50%       { opacity: 1;    }
+}
+
+/* ─── Animation Utilities ────────────────────────────────── */
+.anim-fade-in {
+  animation: fadeIn 1.2s ease both;
+}
+
+.anim-fade-in-up {
+  animation: fadeInUp 1s ease both;
+}
+
+.anim-scale-in {
+  animation: scaleIn 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.anim-slow-spin {
+  animation: slowSpin 80s linear infinite;
+}
+
+.anim-shimmer {
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+/* ─── Arabic text ────────────────────────────────────────── */
+.arabic {
+  direction: rtl;
+  font-family: var(--font-amiri), serif;
+  line-height: 1.9;
+}
+
+/* ─── Gold divider ───────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(201, 168, 76, 0.65),
+    transparent
+  );
+}
+
+/* ─── Invitation card hover ──────────────────────────────── */
+.side-card {
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.side-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 52px rgba(201, 168, 76, 0.2);
+}
+
+/* ─── Map button hover ───────────────────────────────────── */
+.map-btn {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.map-btn:hover {
+  background-color: var(--gold);
+  color: #fff;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: var(--ivory); }
+::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 3px; }
