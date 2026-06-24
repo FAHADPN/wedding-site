@@ -32,3 +32,6 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Source art (heavy PNGs; optimized webp live in public/scene)
+pngs generated/

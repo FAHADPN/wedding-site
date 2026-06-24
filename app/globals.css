@@ -179,6 +179,38 @@ body {
   .lantern-drift { animation: none; }
 }
 
+/* ─── Parallax scene frame ───────────────────────────────── */
+.scene-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 1024 / 1536;
+  width: min(100vw, calc(100dvh * 0.6667));
+  height: auto;
+  overflow: hidden;
+}
+/* portrait phones: cover the viewport height (crop the frame edges) */
+@media (max-aspect-ratio: 2 / 3) {
+  .scene-frame {
+    width: auto;
+    height: 100dvh;
+  }
+}
+
+/* ─── Parallax scene layers ──────────────────────────────── */
+.scene-layer {
+  transform: translate3d(
+    calc(var(--mx, 0) * var(--f, 0) * 1px),
+    calc(var(--my, 0) * var(--f, 0) * 0.55px),
+    0
+  );
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-layer { transform: none; }
+}
+
 /* ─── Scroll reveal ──────────────────────────────────────── */
 .reveal {
   opacity: 0;

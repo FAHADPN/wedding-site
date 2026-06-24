@@ -1,193 +1,114 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useEffect, useRef } from 'react'
 
-/* Cream "Mughal palace" themed invitation — visit /lantern.
-   Drop your palace+couple artwork at public/hero.png (tall portrait, no text)
-   and it fills the lower scene area. Not linked from the live site. */
+/* Layered parallax "Mughal palace" scene — visit /lantern.
+   Pure atmosphere, no content yet. Leads into choose-your-side later. */
 
-const GREEN = '#33483a'      // deep green — primary text / names
-const GREEN_SOFT = '#5d6b55' // muted green — labels
-const GOLD = '#b18a45'       // warm gold — accents / rules
-const GOLD_SOFT = '#c9a84c'
-const CREAM = '#fbf6ea'
-const INK = '#4a4638'
+const SCENE = '/scene'
 
-/* ── small inline ornaments ── */
-function Rule({ w = 64 }) {
-  return <div style={{ width: w, height: '1px', background: `linear-gradient(90deg, transparent, ${GOLD}, transparent)` }} />
-}
-
-function RingsIcon() {
+/* A single depth layer. `pos` positions the OUTER wrapper (incl. centering);
+   `f` is the parallax strength (px) applied to the inner .scene-layer. */
+function Layer({ src, z, f, pos, cover, float, alt = '' }) {
   return (
-    <svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke={GOLD} strokeWidth="1.3">
-      <circle cx="12" cy="20" r="8" /><circle cx="20" cy="20" r="8" />
-      <path d="M16 5l3 4h-6l3-4z" fill={GOLD} stroke="none" />
-    </svg>
-  )
-}
-function CameraIcon() {
-  return (
-    <svg width="26" height="26" viewBox="0 0 32 32" fill="none" stroke={GOLD} strokeWidth="1.3">
-      <rect x="3" y="9" width="26" height="18" rx="2" /><circle cx="16" cy="18" r="5" />
-      <path d="M11 9l2-3h6l2 3" />
-    </svg>
-  )
-}
-
-/* ── hanging lantern (uses cropped PNG on a thin cord) ── */
-function HangingLantern({ side, w = 64, top = 70 }) {
-  return (
-    <div style={{ position: 'absolute', top: 0, [side]: '4%', display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'none', zIndex: 1 }}>
-      <div style={{ width: '1px', height: top, background: `linear-gradient(${GOLD}, rgba(177,138,69,0.2))` }} />
-      <img src="/lantern-single.png" alt="" aria-hidden="true" className="lantern-drift" style={{ width: w, display: 'block', filter: 'saturate(0.9)', animationDuration: '6.5s' }} />
+    <div style={{ position: 'absolute', zIndex: z, pointerEvents: 'none', ...pos }}>
+      <div className="scene-layer" style={{ ['--f']: f, width: '100%', height: cover ? '100%' : 'auto' }}>
+        <img
+          src={src}
+          alt={alt}
+          aria-hidden={alt ? undefined : 'true'}
+          className={float ? 'lantern-drift' : undefined}
+          style={{
+            width: '100%',
+            height: cover ? '100%' : 'auto',
+            objectFit: cover ? 'cover' : 'contain',
+            objectPosition: 'center bottom',
+            display: 'block',
+            animationDuration: float ? '6.5s' : undefined,
+          }}
+        />
+      </div>
     </div>
   )
 }
 
-/* ── Mughal cusped arch frame (decorative, behind content) ── */
-function ArchFrame() {
-  return (
-    <svg viewBox="0 0 300 420" preserveAspectRatio="none" aria-hidden="true"
-      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
-      <defs>
-        <linearGradient id="archg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor={GOLD_SOFT} stopOpacity="0.55" />
-          <stop offset="1" stopColor={GOLD_SOFT} stopOpacity="0.12" />
-        </linearGradient>
-      </defs>
-      {/* outer cusped arch */}
-      <path fill="none" stroke="url(#archg)" strokeWidth="1.4"
-        d="M14,418 L14,150
-           Q14,96 40,70 Q60,50 70,78 Q86,40 110,66 Q130,28 150,58
-           Q170,28 190,66 Q214,40 230,78 Q240,50 260,70 Q286,96 286,150
-           L286,418" />
-      {/* inner line */}
-      <path fill="none" stroke={GOLD_SOFT} strokeOpacity="0.3" strokeWidth="0.8"
-        d="M24,418 L24,152 Q24,104 52,80 Q150,18 248,80 Q276,104 276,152 L276,418" />
-      {/* apex finial */}
-      <circle cx="150" cy="46" r="3" fill={GOLD_SOFT} opacity="0.7" />
-      <path d="M150,40 L150,30" stroke={GOLD_SOFT} strokeWidth="1" opacity="0.6" />
-    </svg>
-  )
-}
+export default function ParallaxScene() {
+  const rootRef = useRef(null)
 
-/* ── Detail icon block ── */
-function EventBlock({ icon, label, time }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', minWidth: '120px' }}>
-      {icon}
-      <p style={{ color: GREEN_SOFT, fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.22em' }}>{label}</p>
-      <p style={{ fontFamily: 'var(--font-cormorant)', color: GREEN, fontSize: '1rem', fontWeight: 500 }}>{time}</p>
-    </div>
-  )
-}
-
-export default function LanternLanding() {
-  // default to the placeholder; swap to the artwork only once it actually loads
-  const [heroOk, setHeroOk] = useState(false)
   useEffect(() => {
-    const img = new window.Image()
-    img.onload = () => setHeroOk(true)
-    img.src = '/hero.png'
+    const root = rootRef.current
+    if (!root) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    let px = 0, py = 0, tx = 0, ty = 0, lastPointer = -9999, raf = 0
+    const onMove = (cx, cy, t) => {
+      tx = (cx / window.innerWidth - 0.5) * 2
+      ty = (cy / window.innerHeight - 0.5) * 2
+      lastPointer = t
+    }
+    const onMouse = (e) => onMove(e.clientX, e.clientY, performance.now())
+    const onTouch = (e) => { if (e.touches[0]) onMove(e.touches[0].clientX, e.touches[0].clientY, performance.now()) }
+    const onOrient = (e) => {
+      if (e.gamma == null) return
+      tx = Math.max(-1, Math.min(1, e.gamma / 28))
+      ty = Math.max(-1, Math.min(1, ((e.beta || 45) - 45) / 28))
+      lastPointer = performance.now()
+    }
+
+    const loop = (t) => {
+      // idle: gentle automatic drift when no recent pointer/tilt input
+      if (t - lastPointer > 1800) {
+        tx = Math.sin(t / 4200) * 0.55
+        ty = Math.cos(t / 5600) * 0.32
+      }
+      px += (tx - px) * 0.05
+      py += (ty - py) * 0.05
+      root.style.setProperty('--mx', px.toFixed(4))
+      root.style.setProperty('--my', py.toFixed(4))
+      raf = requestAnimationFrame(loop)
+    }
+
+    window.addEventListener('mousemove', onMouse)
+    window.addEventListener('touchmove', onTouch, { passive: true })
+    window.addEventListener('deviceorientation', onOrient)
+    raf = requestAnimationFrame(loop)
+    return () => {
+      window.removeEventListener('mousemove', onMouse)
+      window.removeEventListener('touchmove', onTouch)
+      window.removeEventListener('deviceorientation', onOrient)
+      cancelAnimationFrame(raf)
+    }
   }, [])
 
   return (
-    <main style={{ minHeight: '100dvh', background: `linear-gradient(180deg, #fcf8ef 0%, #f4ead6 100%)`, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '28px 14px 56px' }}>
-      <article style={{ position: 'relative', width: '100%', maxWidth: '600px', background: CREAM, border: `1px solid rgba(177,138,69,0.3)`, boxShadow: '0 18px 60px rgba(120,90,40,0.14)', overflow: 'hidden' }}>
-        <ArchFrame />
-        <HangingLantern side="left" w={58} top={64} />
-        <HangingLantern side="right" w={58} top={86} />
+    <main
+      ref={rootRef}
+      style={{
+        position: 'relative',
+        height: '100dvh',
+        overflow: 'hidden',
+        backgroundColor: '#0e0a06',
+      }}
+    >
+      {/* full-bleed sky backdrop */}
+      <Layer src={`${SCENE}/sky.webp`} z={0} f={6} cover pos={{ inset: 0 }} />
 
-        {/* ── content ── */}
-        <div style={{ position: 'relative', zIndex: 2, padding: '46px 28px 0', textAlign: 'center' }}>
-          {/* Bismillah */}
-          <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm"
-            style={{ color: GOLD, fontSize: 'clamp(1.4rem, 6.5vw, 2.4rem)', lineHeight: 1.3, marginBottom: '8px', maxWidth: '100%' }}>﷽</div>
-          <p style={{ fontFamily: 'var(--font-cormorant)', fontStyle: 'italic', color: GREEN_SOFT, fontSize: '0.84rem', marginBottom: '30px' }}>
-            In the Name of Allah, the Most Gracious, the Most Merciful
-          </p>
+      {/* framed scene column (arch aspect); covers portrait, portal on desktop */}
+      <div className="scene-frame">
+        <Layer src={`${SCENE}/palace-far.webp`} z={1} f={10} pos={{ left: '50%', bottom: '12%', width: '132%', transform: 'translateX(-50%)' }} />
+        <Layer src={`${SCENE}/palace.webp`}     z={2} f={16} pos={{ left: '50%', bottom: '8%',  width: '78%',  transform: 'translateX(-50%)' }} />
+        <Layer src={`${SCENE}/couple.webp`}     z={3} f={24} pos={{ left: '50%', bottom: '9%',  width: '20%',  transform: 'translateX(-50%)' }} alt="The couple before the palace" />
+        <Layer src={`${SCENE}/lanterns-sky.webp`} z={4} f={14} float pos={{ left: '50%', top: '-3%', width: '100%', transform: 'translateX(-50%)' }} />
 
-          {/* Together with families */}
-          <p style={{ color: GREEN_SOFT, fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.3em', marginBottom: '6px' }}>
-            Together with their families
-          </p>
-          <p style={{ fontFamily: 'var(--font-cormorant)', color: GREEN_SOFT, fontSize: '0.9rem', letterSpacing: '0.2em', marginBottom: '10px' }}>we</p>
+        {/* foreground arch frame */}
+        <Layer src={`${SCENE}/arch.webp`} z={5} f={8} cover pos={{ inset: 0 }} />
 
-          {/* Names */}
-          <h1 style={{ fontFamily: 'var(--font-script)', color: GREEN, fontSize: 'clamp(3rem, 14vw, 4.6rem)', fontWeight: 400, lineHeight: 1, margin: '0' }}>Nadha</h1>
-          <p style={{ fontFamily: 'var(--font-script)', color: GOLD, fontSize: 'clamp(1.4rem, 6vw, 2rem)', margin: '2px 0' }}>and</p>
-          <h1 style={{ fontFamily: 'var(--font-script)', color: GREEN, fontSize: 'clamp(3rem, 14vw, 4.6rem)', fontWeight: 400, lineHeight: 1, margin: '0 0 22px' }}>Fahad</h1>
+        {/* hanging lanterns in front of the arch */}
+        <Layer src={`${SCENE}/lantern-hang.webp`} z={6} f={30} float pos={{ left: '19%', top: '-2%', width: '15%', transform: 'translateX(-50%)' }} />
+        <Layer src={`${SCENE}/lantern-hang.webp`} z={6} f={34} float pos={{ left: '81%', top: '-2%', width: '13%', transform: 'translateX(-50%)' }} />
 
-          {/* Invite line */}
-          <p style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: '0.96rem', lineHeight: 1.7, maxWidth: '360px', margin: '0 auto 22px' }}>
-            invite you to join us as we celebrate the beginning of our new life together
-          </p>
-
-          <p style={{ color: GOLD, fontSize: '0.78rem', textTransform: 'uppercase', letterSpacing: '0.34em', marginBottom: '22px' }}>In Sha&apos; Allah</p>
-
-          {/* Date block */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '18px', marginBottom: '8px' }}>
-            <Rule w={48} />
-            <p style={{ fontFamily: 'var(--font-cormorant)', color: GREEN, fontSize: '0.7rem', letterSpacing: '0.18em' }}>26<sup>TH</sup></p>
-            <Rule w={48} />
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '6px' }}>
-            <p style={{ fontFamily: 'var(--font-cormorant)', color: GREEN, fontSize: '1.05rem', letterSpacing: '0.16em' }}>SUNDAY</p>
-            <span style={{ color: GOLD }}>·</span>
-            <p style={{ fontFamily: 'var(--font-cormorant)', color: GREEN, fontSize: '1.05rem', letterSpacing: '0.16em' }}>JULY</p>
-            <span style={{ color: GOLD }}>·</span>
-            <p style={{ fontFamily: 'var(--font-cormorant)', color: GREEN, fontSize: '1.05rem', letterSpacing: '0.16em' }}>2026</p>
-          </div>
-          <p style={{ color: GREEN_SOFT, fontSize: '0.7rem', letterSpacing: '0.1em', marginBottom: '20px' }}>( 11 Safar, 1448 AH )</p>
-
-          {/* Venue */}
-          <p style={{ fontFamily: 'var(--font-cormorant)', color: GREEN, fontSize: '0.95rem', letterSpacing: '0.08em', lineHeight: 1.5, marginBottom: '26px' }}>
-            COSMOPOLITAN CONVENTION CENTER,<br />ERIYAD, KODUNGALLUR
-          </p>
-
-          {/* Events */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', marginBottom: '26px' }}>
-            <EventBlock icon={<RingsIcon />} label="Nikah" time="11:30 AM" />
-            <div style={{ width: '1px', background: 'rgba(177,138,69,0.3)' }} />
-            <EventBlock icon={<CameraIcon />} label="Reception" time="07:00 PM" />
-          </div>
-
-          <p style={{ color: GREEN_SOFT, fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.24em', marginBottom: '8px' }}>RSVP by 10th July 2026</p>
-        </div>
-
-        {/* ── hero scene (your artwork) ── */}
-        <div style={{ position: 'relative', zIndex: 2, marginTop: '20px', height: 'clamp(220px, 52vw, 320px)' }}>
-          {heroOk ? (
-            <img src="/hero.png" alt="The couple before the palace" onError={() => setHeroOk(false)}
-              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center bottom', display: 'block' }} />
-          ) : (
-            /* placeholder until your art arrives */
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', gap: '10px', background: 'linear-gradient(180deg, transparent, rgba(177,138,69,0.08))', paddingBottom: '22px' }}>
-              <svg width="220" height="90" viewBox="0 0 220 90" fill="none" stroke={GOLD} strokeWidth="1" opacity="0.5" aria-hidden="true">
-                <path d="M10,90 L10,55 Q10,40 22,40 Q22,28 34,40 Q34,55 34,90" />
-                <path d="M60,90 L60,40 Q60,18 78,18 Q78,2 86,18 Q96,18 96,40 L96,90" />
-                <path d="M120,90 L120,40 Q120,18 138,18 Q138,2 146,18 Q156,18 156,40 L156,90" />
-                <path d="M186,90 L186,55 Q186,40 198,40 Q198,28 210,40 Q210,55 210,90" />
-              </svg>
-              <p style={{ color: GREEN_SOFT, fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Palace artwork → public/hero.png</p>
-            </div>
-          )}
-        </div>
-      </article>
-
-      {/* ── Choose your side (themed) ── */}
-      <div style={{ marginTop: '40px', textAlign: 'center' }}>
-        <p style={{ color: GREEN_SOFT, fontSize: '0.68rem', textTransform: 'uppercase', letterSpacing: '0.3em', marginBottom: '18px' }}>Please choose your side</p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', justifyContent: 'center' }}>
-          <Link href="/bride" className="map-btn" style={{ minWidth: '160px', padding: '14px 26px', border: `1px solid ${GOLD}`, color: GREEN, fontFamily: 'var(--font-cormorant)', fontSize: '0.95rem', letterSpacing: '0.14em', textTransform: 'uppercase', textDecoration: 'none', background: CREAM }}>
-            Bride&apos;s Side
-          </Link>
-          <Link href="/groom" className="map-btn" style={{ minWidth: '160px', padding: '14px 26px', border: `1px solid ${GOLD}`, color: GREEN, fontFamily: 'var(--font-cormorant)', fontSize: '0.95rem', letterSpacing: '0.14em', textTransform: 'uppercase', textDecoration: 'none', background: CREAM }}>
-            Groom&apos;s Side
-          </Link>
-        </div>
+        {/* foreground florals */}
+        <Layer src={`${SCENE}/florals.webp`} z={7} f={40} pos={{ left: '50%', bottom: '-3%', width: '108%', transform: 'translateX(-50%)' }} />
       </div>
     </main>
   )
