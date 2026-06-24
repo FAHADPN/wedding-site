@@ -159,17 +159,18 @@ body {
   }
 }
 
-/* ─── Sky-lantern float ──────────────────────────────────── */
-@keyframes lanternFloat {
-  0%   { transform: translateX(-50%) translateY(0); }
-  50%  { transform: translateX(-50%) translateY(-16px); }
-  100% { transform: translateX(-50%) translateY(0); }
+/* ─── Sky-lantern float (depth field) ────────────────────── */
+@keyframes lanternDriftY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-18px); }
 }
-.lantern-float {
-  animation: lanternFloat 7s ease-in-out infinite;
+.lantern-drift {
+  animation-name: lanternDriftY;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  .lantern-float { animation: none; }
+  .lantern-drift { animation: none; }
 }
 
 /* ─── RSVP form inputs ───────────────────────────────────── */
