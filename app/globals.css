@@ -143,6 +143,22 @@ body {
   color: #fff;
 }
 
+/* ─── Lantern glow ───────────────────────────────────────── */
+@keyframes lanternGlow {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.94); }
+  50%      { opacity: 0.95; transform: translate(-50%, -50%) scale(1.10); }
+}
+.lantern-glow {
+  transform: translate(-50%, -50%);
+  animation: lanternGlow 4.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lantern-glow {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
 /* ─── RSVP form inputs ───────────────────────────────────── */
 .rsvp-input {
   width: 100%;
