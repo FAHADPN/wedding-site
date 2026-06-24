@@ -1,5 +1,3 @@
-import Lantern from '../../components/Lantern'
-
 /* Demo / judging page — visit /lantern. Not linked from the live site. */
 
 function Panel({ theme }) {
@@ -28,23 +26,34 @@ function Panel({ theme }) {
       }}
     >
       {/* theme tag */}
-      <p style={{ position: 'absolute', top: '16px', left: '50%', transform: 'translateX(-50%)', color: muted, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.28em' }}>
+      <p style={{ position: 'absolute', top: '16px', left: '50%', transform: 'translateX(-50%)', color: muted, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.28em', zIndex: 2 }}>
         {dark ? 'Dark' : 'Light'}
       </p>
 
-      {/* Bismillah flanked by a pair of lanterns */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '32px' }}>
-        <Lantern size={92} theme={theme} />
-        <div style={{ alignSelf: 'center', textAlign: 'center', padding: '0 4px' }}>
-          <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: gold, fontSize: '3rem', lineHeight: 1.3 }}>
-            ﷽
-          </div>
-        </div>
-        <Lantern size={92} theme={theme} />
-      </div>
+      {/* Rising sky lanterns — decorative layer behind the content */}
+      <img
+        src="/lanterns.png"
+        alt=""
+        aria-hidden="true"
+        className="lantern-float"
+        style={{
+          position: 'absolute',
+          bottom: '-3%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 'min(820px, 100%)',
+          opacity: dark ? 0.95 : 0.78,
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
 
-      {/* Names */}
-      <div style={{ textAlign: 'center' }}>
+      {/* Content */}
+      <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
+        <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: gold, fontSize: '3rem', lineHeight: 1.3, marginBottom: '28px' }}>
+          ﷽
+        </div>
+
         <p style={{ color: muted, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.32em', marginBottom: '12px' }}>
           The Wedding of
         </p>
@@ -59,11 +68,6 @@ function Panel({ theme }) {
         <h1 style={{ fontFamily: 'var(--font-cormorant)', color: ink, fontSize: '2.4rem', fontWeight: 300, lineHeight: 1.1 }}>
           Nadha Shirin K N
         </h1>
-      </div>
-
-      {/* Single large lantern below, to judge detail */}
-      <div style={{ marginTop: '40px' }}>
-        <Lantern size={130} theme={theme} />
       </div>
     </section>
   )

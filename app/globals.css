@@ -159,6 +159,19 @@ body {
   }
 }
 
+/* ─── Sky-lantern float ──────────────────────────────────── */
+@keyframes lanternFloat {
+  0%   { transform: translateX(-50%) translateY(0); }
+  50%  { transform: translateX(-50%) translateY(-16px); }
+  100% { transform: translateX(-50%) translateY(0); }
+}
+.lantern-float {
+  animation: lanternFloat 7s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lantern-float { animation: none; }
+}
+
 /* ─── RSVP form inputs ───────────────────────────────────── */
 .rsvp-input {
   width: 100%;
