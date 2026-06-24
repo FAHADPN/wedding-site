@@ -8,7 +8,7 @@ export default function Countdown({ targetDate, labels, isMl }) {
   useEffect(() => {
     const calc = () => {
       const diff = new Date(targetDate) - new Date()
-      if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+      if (diff <= 0) return { done: true }
       return {
         days:    Math.floor(diff / 86400000),
         hours:   Math.floor((diff % 86400000) / 3600000),
@@ -22,6 +22,25 @@ export default function Countdown({ targetDate, labels, isMl }) {
   }, [targetDate])
 
   if (!timeLeft) return <div style={{ height: '72px' }} />
+
+  if (timeLeft.done) {
+    return (
+      <div
+        className="anim-shimmer"
+        style={{
+          fontFamily: isMl ? 'var(--font-noto-ml)' : 'var(--font-cormorant)',
+          color: '#C9A84C',
+          fontSize: isMl ? '1.4rem' : '1.9rem',
+          fontStyle: isMl ? 'normal' : 'italic',
+          fontWeight: 400,
+          textAlign: 'center',
+          lineHeight: 1.4,
+        }}
+      >
+        {labels?.today || (isMl ? 'അൽഹംദുലില്ലാഹ് — ഇന്നാണ് ആ ദിനം!' : 'Alhamdulillah — the day is here!')}
+      </div>
+    )
+  }
 
   const units = [
     { key: 'days',    label: labels?.days    || 'Days'    },
@@ -59,7 +78,7 @@ export default function Countdown({ targetDate, labels, isMl }) {
             </div>
             <div style={{
               color: '#9B7B3A',
-              fontSize: isMl ? '0.58rem' : '0.62rem',
+              fontSize: isMl ? '0.68rem' : '0.72rem',
               textTransform: 'uppercase',
               letterSpacing: '0.14em',
               marginTop: '6px',

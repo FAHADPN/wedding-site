@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
 const Countdown = dynamic(() => import('../../components/Countdown'), { ssr: false })
+const Rsvp = dynamic(() => import('../../components/Rsvp'), { ssr: false })
 
 /* ─── Translations ─────────────────────────────────────────────── */
 const TRANSLATIONS = {
@@ -87,7 +88,7 @@ function DetailRow({ icon, label, value, isMl }) {
       <div>
         <p style={{
           color: '#9B7B3A',
-          fontSize: '0.6rem',
+          fontSize: '0.72rem',
           textTransform: 'uppercase',
           letterSpacing: '0.2em',
           marginBottom: '4px',
@@ -115,12 +116,18 @@ export default function BridePage() {
   const t    = TRANSLATIONS[lang]
   const isMl = lang === 'ml'
 
+  // Inherit the language chosen on the landing screen (?lang=ml|en)
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search).get('lang')
+    if (p === 'ml' || p === 'en') setLang(p)
+  }, [])
+
   const toggleLang = () => setLang(l => (l === 'en' ? 'ml' : 'en'))
 
   const bodyFont = isMl ? 'var(--font-noto-ml)' : 'var(--font-cormorant)'
 
   return (
-    <div className="islamic-bg" style={{ minHeight: '100vh' }}>
+    <div className="islamic-bg" style={{ minHeight: '100dvh' }}>
 
       {/* ── Top Nav ── */}
       <nav style={{
@@ -132,6 +139,11 @@ export default function BridePage() {
         borderBottom: '1px solid rgba(201,168,76,0.15)',
       }}>
         <Link href="/" style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          minHeight: '44px',
+          padding: '4px 8px',
+          margin: '0 -8px',
           color: '#9B7B3A',
           fontSize: '0.72rem',
           textTransform: 'uppercase',
@@ -145,13 +157,14 @@ export default function BridePage() {
         <button
           onClick={toggleLang}
           style={{
+            minHeight: '44px',
             color: '#9B7B3A',
             fontSize: '0.7rem',
             textTransform: 'uppercase',
             letterSpacing: '0.22em',
             background: 'none',
             border: '1px solid rgba(201,168,76,0.45)',
-            padding: '5px 14px',
+            padding: '8px 18px',
             cursor: 'pointer',
             fontFamily: isMl ? 'var(--font-noto-ml)' : undefined,
             transition: 'border-color 0.2s, color 0.2s',
@@ -168,13 +181,15 @@ export default function BridePage() {
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div
             className="arabic anim-shimmer"
-            style={{ color: '#C9A84C', fontSize: '2.6rem', marginBottom: '10px' }}
+            lang="ar"
+            aria-label="Bismillāh ir-Raḥmān ir-Raḥīm"
+            style={{ color: '#C9A84C', fontSize: '3.6rem', lineHeight: 1.3, marginBottom: '14px' }}
           >
-            بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ
+            ﷽
           </div>
           <p style={{
             color: '#9B7B3A',
-            fontSize: isMl ? '0.72rem' : '0.65rem',
+            fontSize: isMl ? '0.72rem' : '0.72rem',
             letterSpacing: isMl ? '0.05em' : '0.18em',
             textTransform: isMl ? 'none' : 'uppercase',
             fontFamily: bodyFont,
@@ -194,7 +209,7 @@ export default function BridePage() {
         <div style={{ textAlign: 'center', marginBottom: '36px' }}>
           <p style={{
             color: '#9B7B3A',
-            fontSize: '0.65rem',
+            fontSize: '0.72rem',
             textTransform: 'uppercase',
             letterSpacing: '0.28em',
             marginBottom: '10px',
@@ -216,7 +231,7 @@ export default function BridePage() {
           {/* Event badge */}
           <p style={{
             color: '#9B7B3A',
-            fontSize: '0.62rem',
+            fontSize: '0.72rem',
             textTransform: 'uppercase',
             letterSpacing: '0.28em',
             marginBottom: '24px',
@@ -303,7 +318,7 @@ export default function BridePage() {
 
           <p style={{
             color: '#C9A84C',
-            fontSize: '0.6rem',
+            fontSize: '0.72rem',
             textTransform: 'uppercase',
             letterSpacing: '0.22em',
             textAlign: 'center',
@@ -323,7 +338,7 @@ export default function BridePage() {
         }}>
           <p style={{
             color: '#C9A84C',
-            fontSize: '0.6rem',
+            fontSize: '0.72rem',
             textTransform: 'uppercase',
             letterSpacing: '0.28em',
             textAlign: 'center',
@@ -345,7 +360,7 @@ export default function BridePage() {
               <div>
                 <p style={{
                   color: '#9B7B3A',
-                  fontSize: '0.6rem',
+                  fontSize: '0.72rem',
                   textTransform: 'uppercase',
                   letterSpacing: '0.2em',
                   marginBottom: '4px',
@@ -374,7 +389,7 @@ export default function BridePage() {
                     border: '1px solid #C9A84C',
                     color: '#C9A84C',
                     padding: '8px 18px',
-                    fontSize: '0.62rem',
+                    fontSize: '0.72rem',
                     textTransform: 'uppercase',
                     letterSpacing: '0.18em',
                     textDecoration: 'none',
@@ -396,7 +411,7 @@ export default function BridePage() {
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <p style={{
             color: '#9B7B3A',
-            fontSize: '0.62rem',
+            fontSize: '0.72rem',
             textTransform: 'uppercase',
             letterSpacing: '0.28em',
             marginBottom: '20px',
@@ -410,6 +425,9 @@ export default function BridePage() {
             isMl={isMl}
           />
         </div>
+
+        {/* RSVP */}
+        <Rsvp side="bride" isMl={isMl} lang={lang} />
 
         {/* Dua / Blessing */}
         <div style={{

@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
 const Countdown = dynamic(() => import('../../components/Countdown'), { ssr: false })
+const Rsvp = dynamic(() => import('../../components/Rsvp'), { ssr: false })
 
 /* ─── Translations ─────────────────────────────────────────────── */
 const TRANSLATIONS = {
@@ -90,7 +91,7 @@ function DetailRow({ icon, label, value, isMl }) {
       <div>
         <p style={{
           color: '#9B7B3A',
-          fontSize: '0.6rem',
+          fontSize: '0.72rem',
           textTransform: 'uppercase',
           letterSpacing: '0.2em',
           marginBottom: '4px',
@@ -118,6 +119,12 @@ export default function GroomPage() {
   const t    = TRANSLATIONS[lang]
   const isMl = lang === 'ml'
 
+  // Inherit the language chosen on the landing screen (?lang=ml|en)
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search).get('lang')
+    if (p === 'ml' || p === 'en') setLang(p)
+  }, [])
+
   const toggleLang = () => setLang(l => (l === 'en' ? 'ml' : 'en'))
 
   const bodyFont = isMl ? 'var(--font-noto-ml)' : 'var(--font-cormorant)'
@@ -125,7 +132,7 @@ export default function GroomPage() {
   return (
     <div
       style={{
-        minHeight: '100vh',
+        minHeight: '100dvh',
         backgroundColor: '#FEF9EE',
         backgroundImage:
           'repeating-linear-gradient(45deg,transparent 0px,transparent 39px,rgba(201,168,76,0.06) 39px,rgba(201,168,76,0.06) 40px),' +
@@ -142,6 +149,11 @@ export default function GroomPage() {
         borderBottom: '1px solid rgba(201,168,76,0.15)',
       }}>
         <Link href="/" style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          minHeight: '44px',
+          padding: '4px 8px',
+          margin: '0 -8px',
           color: '#9B7B3A',
           fontSize: '0.72rem',
           textTransform: 'uppercase',
@@ -154,13 +166,14 @@ export default function GroomPage() {
         <button
           onClick={toggleLang}
           style={{
+            minHeight: '44px',
             color: '#9B7B3A',
             fontSize: '0.7rem',
             textTransform: 'uppercase',
             letterSpacing: '0.22em',
             background: 'none',
             border: '1px solid rgba(201,168,76,0.45)',
-            padding: '5px 14px',
+            padding: '8px 18px',
             cursor: 'pointer',
             fontFamily: isMl ? 'var(--font-noto-ml)' : undefined,
           }}
@@ -176,13 +189,15 @@ export default function GroomPage() {
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div
             className="arabic anim-shimmer"
-            style={{ color: '#C9A84C', fontSize: '2.6rem', marginBottom: '10px' }}
+            lang="ar"
+            aria-label="Bismillāh ir-Raḥmān ir-Raḥīm"
+            style={{ color: '#C9A84C', fontSize: '3.6rem', lineHeight: 1.3, marginBottom: '14px' }}
           >
-            بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ
+            ﷽
           </div>
           <p style={{
             color: '#9B7B3A',
-            fontSize: isMl ? '0.72rem' : '0.65rem',
+            fontSize: isMl ? '0.72rem' : '0.72rem',
             letterSpacing: isMl ? '0.05em' : '0.18em',
             textTransform: isMl ? 'none' : 'uppercase',
             fontFamily: bodyFont,
@@ -202,7 +217,7 @@ export default function GroomPage() {
         <div style={{ textAlign: 'center', marginBottom: '36px' }}>
           <p style={{
             color: '#9B7B3A',
-            fontSize: '0.65rem',
+            fontSize: '0.72rem',
             textTransform: 'uppercase',
             letterSpacing: '0.28em',
             marginBottom: '10px',
@@ -223,7 +238,7 @@ export default function GroomPage() {
 
           <p style={{
             color: '#9B7B3A',
-            fontSize: '0.62rem',
+            fontSize: '0.72rem',
             textTransform: 'uppercase',
             letterSpacing: '0.28em',
             marginBottom: '24px',
@@ -308,7 +323,7 @@ export default function GroomPage() {
 
           <p style={{
             color: '#C9A84C',
-            fontSize: '0.6rem',
+            fontSize: '0.72rem',
             textTransform: 'uppercase',
             letterSpacing: '0.22em',
             textAlign: 'center',
@@ -328,7 +343,7 @@ export default function GroomPage() {
         }}>
           <p style={{
             color: '#C9A84C',
-            fontSize: '0.6rem',
+            fontSize: '0.72rem',
             textTransform: 'uppercase',
             letterSpacing: '0.28em',
             textAlign: 'center',
@@ -350,7 +365,7 @@ export default function GroomPage() {
               <div>
                 <p style={{
                   color: '#9B7B3A',
-                  fontSize: '0.6rem',
+                  fontSize: '0.72rem',
                   textTransform: 'uppercase',
                   letterSpacing: '0.2em',
                   marginBottom: '4px',
@@ -379,7 +394,7 @@ export default function GroomPage() {
                     border: '1px solid #C9A84C',
                     color: '#C9A84C',
                     padding: '8px 18px',
-                    fontSize: '0.62rem',
+                    fontSize: '0.72rem',
                     textTransform: 'uppercase',
                     letterSpacing: '0.18em',
                     textDecoration: 'none',
@@ -401,7 +416,7 @@ export default function GroomPage() {
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <p style={{
             color: '#9B7B3A',
-            fontSize: '0.62rem',
+            fontSize: '0.72rem',
             textTransform: 'uppercase',
             letterSpacing: '0.28em',
             marginBottom: '20px',
@@ -415,6 +430,9 @@ export default function GroomPage() {
             isMl={isMl}
           />
         </div>
+
+        {/* RSVP */}
+        <Rsvp side="groom" isMl={isMl} lang={lang} />
 
         {/* Dua */}
         <div style={{

@@ -94,6 +94,19 @@ body {
   animation: shimmer 4s ease-in-out infinite;
 }
 
+/* ─── Respect reduced-motion preference ──────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .anim-fade-in,
+  .anim-fade-in-up,
+  .anim-scale-in,
+  .anim-slow-spin,
+  .anim-shimmer {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 /* ─── Arabic text ────────────────────────────────────────── */
 .arabic {
   direction: rtl;
@@ -128,6 +141,27 @@ body {
 .map-btn:hover {
   background-color: var(--gold);
   color: #fff;
+}
+
+/* ─── RSVP form inputs ───────────────────────────────────── */
+.rsvp-input {
+  width: 100%;
+  padding: 12px 14px;
+  min-height: 46px;
+  border: 1px solid rgba(201, 168, 76, 0.32);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--text-dark);
+  font-size: 1rem;
+  border-radius: 0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.rsvp-input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.12);
+  outline: none;
+}
+.rsvp-input::placeholder {
+  color: rgba(155, 123, 58, 0.45);
 }
 
 /* ─── Scrollbar ──────────────────────────────────────────── */
