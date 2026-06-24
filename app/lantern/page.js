@@ -137,7 +137,7 @@ export default function ParallaxScene() {
         <Layer src={`${SCENE}/palace.webp`}        z={2} f={16} order={2} pos={{ left: '50%', bottom: '8%',  width: '78%',  transform: 'translateX(-50%)' }} />
         {/* floating lanterns sit BEHIND the couple now */}
         <Layer src={`${SCENE}/lanterns-sky.webp`}  z={3} f={14} order={3} float pos={{ left: '50%', top: '-3%', width: '100%', transform: 'translateX(-50%)' }} />
-        <Layer src={`${SCENE}/couple.webp`}        z={4} f={24} order={4} pos={{ left: '50%', bottom: '8%', width: '24%', transform: 'translateX(-50%)' }} alt="The couple before the palace" />
+        <Layer src={`${SCENE}/couple.webp`}        z={4} f={24} order={4} pos={{ left: '50%', bottom: '7%', width: '34%', transform: 'translateX(-50%)' }} alt="The couple before the palace" />
 
         {/* foreground arch frame */}
         <Layer src={`${SCENE}/arch.webp`} z={5} f={8} order={5} cover pos={{ inset: 0 }} />
@@ -159,13 +159,16 @@ export default function ParallaxScene() {
         onClick={() => setChoosing(true)}
         className="scene-cue"
         style={{
-          position: 'absolute', zIndex: 30, left: '50%', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 26px)',
-          transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-          background: 'none', border: 'none', cursor: 'pointer', color: '#E8D5A3',
+          position: 'absolute', zIndex: 30, left: '50%', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 30px)',
+          transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px',
+          padding: '14px 30px', borderRadius: '999px', cursor: 'pointer',
+          background: 'rgba(14,10,6,0.62)', border: '1px solid rgba(232,213,163,0.7)',
+          color: '#F3E9D2', boxShadow: '0 6px 26px rgba(0,0,0,0.45), 0 0 22px rgba(201,168,76,0.25)',
+          backdropFilter: 'blur(3px)',
         }}
       >
-        <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.34em', textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}>Enter</span>
-        <svg className="cue-chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8D5A3" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 1px 6px rgba(0,0,0,0.6))' }}>
+        <span style={{ fontSize: '0.84rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.34em' }}>Enter</span>
+        <svg className="cue-chev" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F3E9D2" strokeWidth="2">
           <path d="M6 9l6 6 6-6" />
         </svg>
       </button>
