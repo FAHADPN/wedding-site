@@ -149,7 +149,7 @@ export default function LanternLanding() {
 
       {/* ── Hero ── */}
       <section style={{ position: 'relative', zIndex: 2, minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '64px 16px' }}>
-        <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: GOLD, fontSize: '3rem', lineHeight: 1.3, marginBottom: '30px' }}>﷽</div>
+        <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: GOLD, fontSize: 'clamp(1.5rem, 7vw, 3rem)', lineHeight: 1.3, marginBottom: '30px', maxWidth: '100%' }}>﷽</div>
         <p style={{ color: MUTED, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.34em', marginBottom: '16px' }}>The Wedding of</p>
         <h1 style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: 'clamp(2.2rem, 7vw, 3.1rem)', fontWeight: 300, lineHeight: 1.1, marginBottom: '14px' }}>Fahad P N</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', justifyContent: 'center', marginBottom: '14px' }}>

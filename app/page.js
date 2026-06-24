@@ -152,7 +152,7 @@ function LanguagePicker({ onSelect }) {
         className="arabic anim-fade-in anim-shimmer"
         lang="ar"
         aria-label="Bismillāh ir-Raḥmān ir-Raḥīm"
-        style={{ animationDelay: '0.1s', color: '#C9A84C', fontSize: '3rem', lineHeight: 1.3, marginBottom: '24px', textAlign: 'center' }}
+        style={{ animationDelay: '0.1s', color: '#C9A84C', fontSize: 'clamp(1.5rem, 7vw, 3rem)', lineHeight: 1.3, marginBottom: '24px', textAlign: 'center', maxWidth: '100%' }}
       >
         ﷽
       </div>
@@ -239,7 +239,7 @@ function Landing({ lang }) {
         className="arabic anim-fade-in anim-shimmer"
         lang="ar"
         aria-label="Bismillāh ir-Raḥmān ir-Raḥīm"
-        style={{ animationDelay: '0.1s', color: '#C9A84C', fontSize: '3.2rem', lineHeight: 1.3, marginBottom: '28px', textAlign: 'center' }}
+        style={{ animationDelay: '0.1s', color: '#C9A84C', fontSize: 'clamp(1.6rem, 7.5vw, 3.2rem)', lineHeight: 1.3, marginBottom: '28px', textAlign: 'center', maxWidth: '100%' }}
       >
         ﷽
       </div>

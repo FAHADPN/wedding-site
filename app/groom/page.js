@@ -191,7 +191,7 @@ export default function GroomPage() {
             className="arabic anim-shimmer"
             lang="ar"
             aria-label="Bismillāh ir-Raḥmān ir-Raḥīm"
-            style={{ color: '#C9A84C', fontSize: '3.6rem', lineHeight: 1.3, marginBottom: '14px' }}
+            style={{ color: '#C9A84C', fontSize: 'clamp(1.7rem, 8vw, 3.6rem)', lineHeight: 1.3, marginBottom: '14px', maxWidth: '100%' }}
           >
             ﷽
           </div>
