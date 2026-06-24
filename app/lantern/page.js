@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 
 /* Layered parallax "Mughal palace" scene — visit /lantern.
    Pure atmosphere, no content yet. Leads into choose-your-side later. */
@@ -37,9 +38,30 @@ function Layer({ src, z, f, order, pos, cover, float, alt = '' }) {
   )
 }
 
+/* ── Choose-your-side card ── */
+function SideCard({ href, title, arabic, sub, time, glyph, delay }) {
+  return (
+    <Link href={href} className="choose-card" style={{
+      width: 'min(230px, 80vw)', padding: '30px 26px', textDecoration: 'none',
+      border: '1px solid rgba(201,168,76,0.45)', background: 'rgba(24,17,10,0.66)',
+      backdropFilter: 'blur(3px)', position: 'relative', transitionDelay: `${delay}s`,
+    }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ color: '#E8D5A3', fontSize: '1.4rem', marginBottom: '8px' }}>{glyph}</div>
+        <div className="arabic" style={{ color: '#E8D5A3', fontSize: '1rem', marginBottom: '10px' }}>{arabic}</div>
+        <div style={{ width: '100%', height: '1px', background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)', margin: '0 0 12px' }} />
+        <h3 style={{ fontFamily: 'var(--font-cormorant)', color: '#F3E9D2', fontSize: '1.25rem', fontWeight: 500, marginBottom: '6px' }}>{title}</h3>
+        <p style={{ color: '#C9A84C', fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '8px' }}>{sub}</p>
+        <p style={{ fontFamily: 'var(--font-cormorant)', color: '#E8D5A3', fontSize: '1rem', fontStyle: 'italic' }}>{time}</p>
+      </div>
+    </Link>
+  )
+}
+
 export default function ParallaxScene() {
   const rootRef = useRef(null)
   const [ready, setReady] = useState(false)
+  const [choosing, setChoosing] = useState(false)
 
   /* preload every layer, then trigger the staggered entrance */
   useEffect(() => {
@@ -103,7 +125,7 @@ export default function ParallaxScene() {
   return (
     <main
       ref={rootRef}
-      className={`scene-root${ready ? ' ready' : ''}`}
+      className={`scene-root${ready ? ' ready' : ''}${choosing ? ' choosing' : ''}`}
       style={{ position: 'relative', height: '100dvh', overflow: 'hidden', backgroundColor: '#0e0a06' }}
     >
       {/* full-bleed sky backdrop */}
@@ -130,6 +152,51 @@ export default function ParallaxScene() {
 
       {/* cinematic curtain that lifts once everything is loaded */}
       <div className="scene-curtain" aria-hidden="true" />
+
+      {/* entry cue */}
+      <button
+        type="button"
+        onClick={() => setChoosing(true)}
+        className="scene-cue"
+        style={{
+          position: 'absolute', zIndex: 30, left: '50%', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 26px)',
+          transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+          background: 'none', border: 'none', cursor: 'pointer', color: '#E8D5A3',
+        }}
+      >
+        <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.34em', textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}>Enter</span>
+        <svg className="cue-chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E8D5A3" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 1px 6px rgba(0,0,0,0.6))' }}>
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+
+      {/* choose-your-side overlay */}
+      <div
+        className={`choose-overlay${choosing ? ' open' : ''}`}
+        style={{
+          position: 'absolute', inset: 0, zIndex: 40,
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          padding: '64px 18px', textAlign: 'center',
+          background: 'radial-gradient(ellipse 80% 70% at 50% 50%, rgba(14,10,6,0.74), rgba(14,10,6,0.9))',
+        }}
+        aria-hidden={!choosing}
+      >
+        <button
+          type="button"
+          onClick={() => setChoosing(false)}
+          style={{ position: 'absolute', top: '20px', left: '20px', background: 'none', border: 'none', color: '#C9A84C', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.2em', cursor: 'pointer' }}
+        >
+          ← Back
+        </button>
+
+        <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: '#E8D5A3', fontSize: 'clamp(1.3rem, 6vw, 2rem)', lineHeight: 1.3, marginBottom: '18px', maxWidth: '100%' }}>﷽</div>
+        <p style={{ color: '#C9A84C', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.32em', marginBottom: '28px' }}>Please choose your side</p>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '18px', justifyContent: 'center' }}>
+          <SideCard href="/bride" title="Bride's Side" arabic="جانب العروس" sub="Nikkah Ceremony" time="11:30 AM" glyph="◯" delay={0.15} />
+          <SideCard href="/groom" title="Groom's Side" arabic="جانب العريس" sub="Wedding Reception" time="07:00 PM" glyph="◈" delay={0.28} />
+        </div>
+      </div>
     </main>
   )
 }
