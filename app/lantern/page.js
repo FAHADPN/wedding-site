@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 
 /* Immersive dark landing prototype — visit /lantern. Not linked from live site.
@@ -36,10 +36,10 @@ const PLANES = {
   ],
 }
 
-function Lantern({ l }) {
+function Lantern({ l, scale }) {
   return (
-    <div style={{ position: 'absolute', left: `${l.left}%`, bottom: `${l.bottom}%`, width: l.w, transform: `translateX(-50%)${l.flip ? ' scaleX(-1)' : ''}`, opacity: l.op, pointerEvents: 'none' }}>
-      <img src={l.img} alt="" aria-hidden="true" className="lantern-drift" style={{ width: '100%', display: 'block', filter: `saturate(${l.sat}) blur(${l.blur}px)`, animationDuration: `${l.dur}s`, animationDelay: `${l.delay}s` }} />
+    <div style={{ position: 'absolute', left: `${l.left}%`, bottom: `${l.bottom}%`, width: l.w * scale, transform: `translateX(-50%)${l.flip ? ' scaleX(-1)' : ''}`, opacity: l.op, pointerEvents: 'none' }}>
+      <img src={l.img} alt="" aria-hidden="true" className="lantern-drift" style={{ width: '100%', display: 'block', filter: `saturate(${l.sat}) blur(${l.blur * scale}px)`, animationDuration: `${l.dur}s`, animationDelay: `${l.delay}s` }} />
     </div>
   )
 }
@@ -70,7 +70,7 @@ function CornerDecor({ style }) {
 
 function SideCard({ title, arabic, sub, time, glyph }) {
   return (
-    <div className="side-card" style={{ width: '230px', padding: '36px 28px', border: '1px solid rgba(201,168,76,0.4)', background: 'rgba(28,20,12,0.55)', backdropFilter: 'blur(2px)', position: 'relative', cursor: 'pointer' }}>
+    <div className="side-card" style={{ width: 'min(230px, 82vw)', padding: '36px 28px', border: '1px solid rgba(201,168,76,0.4)', background: 'rgba(28,20,12,0.62)', position: 'relative', cursor: 'pointer' }}>
       {[
         { top: '8px', left: '8px', borderTop: '1px solid rgba(201,168,76,0.5)', borderLeft: '1px solid rgba(201,168,76,0.5)' },
         { top: '8px', right: '8px', borderTop: '1px solid rgba(201,168,76,0.5)', borderRight: '1px solid rgba(201,168,76,0.5)' },
@@ -93,10 +93,21 @@ export default function LanternLanding() {
   const farRef = useRef(null)
   const midRef = useRef(null)
   const nearRef = useRef(null)
+  const [scale, setScale] = useState(1)
+
+  // Scale the lantern field to the viewport so it never overwhelms small screens
+  useEffect(() => {
+    const calc = () => setScale(Math.min(1, Math.max(0.5, window.innerWidth / 1200)))
+    calc()
+    window.addEventListener('resize', calc)
+    return () => window.removeEventListener('resize', calc)
+  }, [])
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const planes = [[farRef, 0.06], [midRef, 0.12], [nearRef, 0.20]]
+    // lighter parallax on phones to keep scrolling smooth
+    const k = window.innerWidth < 640 ? 0.5 : 1
+    const planes = [[farRef, 0.06 * k], [midRef, 0.12 * k], [nearRef, 0.20 * k]]
     let raf = 0
     const onScroll = () => {
       if (raf) return
@@ -125,9 +136,9 @@ export default function LanternLanding() {
     >
       {/* Fixed lantern stage (parallax planes) */}
       <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', zIndex: 0 }}>
-        <div ref={farRef} style={{ position: 'absolute', inset: 0, willChange: 'transform' }}>{PLANES.far.map((l, i) => <Lantern key={i} l={l} />)}</div>
-        <div ref={midRef} style={{ position: 'absolute', inset: 0, willChange: 'transform' }}>{PLANES.mid.map((l, i) => <Lantern key={i} l={l} />)}</div>
-        <div ref={nearRef} style={{ position: 'absolute', inset: 0, willChange: 'transform' }}>{PLANES.near.map((l, i) => <Lantern key={i} l={l} />)}</div>
+        <div ref={farRef} style={{ position: 'absolute', inset: 0, willChange: 'transform' }}>{PLANES.far.map((l, i) => <Lantern key={i} l={l} scale={scale} />)}</div>
+        <div ref={midRef} style={{ position: 'absolute', inset: 0, willChange: 'transform' }}>{PLANES.mid.map((l, i) => <Lantern key={i} l={l} scale={scale} />)}</div>
+        <div ref={nearRef} style={{ position: 'absolute', inset: 0, willChange: 'transform' }}>{PLANES.near.map((l, i) => <Lantern key={i} l={l} scale={scale} />)}</div>
       </div>
 
       {/* Fixed scrim for legibility */}
