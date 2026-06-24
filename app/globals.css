@@ -198,6 +198,30 @@ body {
   }
 }
 
+/* ─── Scene entrance (preload-gated, staggered) ──────────── */
+.layer-fade {
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.scene-root.ready .layer-fade {
+  opacity: 1;
+}
+.scene-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: #0e0a06;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+.scene-root.ready .scene-curtain {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .layer-fade, .scene-curtain { transition: none; }
+}
+
 /* ─── Parallax scene layers ──────────────────────────────── */
 .scene-layer {
   transform: translate3d(

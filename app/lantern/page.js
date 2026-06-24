@@ -1,17 +1,22 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 /* Layered parallax "Mughal palace" scene — visit /lantern.
    Pure atmosphere, no content yet. Leads into choose-your-side later. */
 
 const SCENE = '/scene'
 
+const SRCS = [
+  'sky.webp', 'palace-far.webp', 'palace.webp', 'lanterns-sky.webp',
+  'couple.webp', 'arch.webp', 'lantern-hang.webp', 'florals.webp',
+]
+
 /* A single depth layer. `pos` positions the OUTER wrapper (incl. centering);
-   `f` is the parallax strength (px) applied to the inner .scene-layer. */
-function Layer({ src, z, f, pos, cover, float, alt = '' }) {
+   `f` is the parallax strength (px); `order` staggers the entrance fade. */
+function Layer({ src, z, f, order, pos, cover, float, alt = '' }) {
   return (
-    <div style={{ position: 'absolute', zIndex: z, pointerEvents: 'none', ...pos }}>
+    <div className="layer-fade" style={{ position: 'absolute', zIndex: z, pointerEvents: 'none', transitionDelay: `${order * 0.12}s`, ...pos }}>
       <div className="scene-layer" style={{ ['--f']: f, width: '100%', height: cover ? '100%' : 'auto' }}>
         <img
           src={src}
@@ -34,7 +39,25 @@ function Layer({ src, z, f, pos, cover, float, alt = '' }) {
 
 export default function ParallaxScene() {
   const rootRef = useRef(null)
+  const [ready, setReady] = useState(false)
 
+  /* preload every layer, then trigger the staggered entrance */
+  useEffect(() => {
+    let done = false
+    const finish = () => { if (!done) { done = true; setReady(true) } }
+    let left = SRCS.length
+    SRCS.forEach((s) => {
+      const img = new window.Image()
+      const tick = () => { if (--left <= 0) finish() }
+      img.onload = tick
+      img.onerror = tick
+      img.src = `${SCENE}/${s}`
+    })
+    const fallback = setTimeout(finish, 4000) // never hang
+    return () => clearTimeout(fallback)
+  }, [])
+
+  /* parallax: pointer + device-tilt + idle drift */
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
@@ -54,9 +77,7 @@ export default function ParallaxScene() {
       ty = Math.max(-1, Math.min(1, ((e.beta || 45) - 45) / 28))
       lastPointer = performance.now()
     }
-
     const loop = (t) => {
-      // idle: gentle automatic drift when no recent pointer/tilt input
       if (t - lastPointer > 1800) {
         tx = Math.sin(t / 4200) * 0.55
         ty = Math.cos(t / 5600) * 0.32
@@ -67,7 +88,6 @@ export default function ParallaxScene() {
       root.style.setProperty('--my', py.toFixed(4))
       raf = requestAnimationFrame(loop)
     }
-
     window.addEventListener('mousemove', onMouse)
     window.addEventListener('touchmove', onTouch, { passive: true })
     window.addEventListener('deviceorientation', onOrient)
@@ -83,33 +103,33 @@ export default function ParallaxScene() {
   return (
     <main
       ref={rootRef}
-      style={{
-        position: 'relative',
-        height: '100dvh',
-        overflow: 'hidden',
-        backgroundColor: '#0e0a06',
-      }}
+      className={`scene-root${ready ? ' ready' : ''}`}
+      style={{ position: 'relative', height: '100dvh', overflow: 'hidden', backgroundColor: '#0e0a06' }}
     >
       {/* full-bleed sky backdrop */}
-      <Layer src={`${SCENE}/sky.webp`} z={0} f={6} cover pos={{ inset: 0 }} />
+      <Layer src={`${SCENE}/sky.webp`} z={0} f={6} order={0} cover pos={{ inset: 0 }} />
 
       {/* framed scene column (arch aspect); covers portrait, portal on desktop */}
       <div className="scene-frame">
-        <Layer src={`${SCENE}/palace-far.webp`} z={1} f={10} pos={{ left: '50%', bottom: '12%', width: '132%', transform: 'translateX(-50%)' }} />
-        <Layer src={`${SCENE}/palace.webp`}     z={2} f={16} pos={{ left: '50%', bottom: '8%',  width: '78%',  transform: 'translateX(-50%)' }} />
-        <Layer src={`${SCENE}/couple.webp`}     z={3} f={24} pos={{ left: '50%', bottom: '9%',  width: '20%',  transform: 'translateX(-50%)' }} alt="The couple before the palace" />
-        <Layer src={`${SCENE}/lanterns-sky.webp`} z={4} f={14} float pos={{ left: '50%', top: '-3%', width: '100%', transform: 'translateX(-50%)' }} />
+        <Layer src={`${SCENE}/palace-far.webp`}   z={1} f={10} order={1} pos={{ left: '50%', bottom: '12%', width: '132%', transform: 'translateX(-50%)' }} />
+        <Layer src={`${SCENE}/palace.webp`}        z={2} f={16} order={2} pos={{ left: '50%', bottom: '8%',  width: '78%',  transform: 'translateX(-50%)' }} />
+        {/* floating lanterns sit BEHIND the couple now */}
+        <Layer src={`${SCENE}/lanterns-sky.webp`}  z={3} f={14} order={3} float pos={{ left: '50%', top: '-3%', width: '100%', transform: 'translateX(-50%)' }} />
+        <Layer src={`${SCENE}/couple.webp`}        z={4} f={24} order={4} pos={{ left: '50%', bottom: '8%', width: '24%', transform: 'translateX(-50%)' }} alt="The couple before the palace" />
 
         {/* foreground arch frame */}
-        <Layer src={`${SCENE}/arch.webp`} z={5} f={8} cover pos={{ inset: 0 }} />
+        <Layer src={`${SCENE}/arch.webp`} z={5} f={8} order={5} cover pos={{ inset: 0 }} />
 
         {/* hanging lanterns in front of the arch */}
-        <Layer src={`${SCENE}/lantern-hang.webp`} z={6} f={30} float pos={{ left: '19%', top: '-2%', width: '15%', transform: 'translateX(-50%)' }} />
-        <Layer src={`${SCENE}/lantern-hang.webp`} z={6} f={34} float pos={{ left: '81%', top: '-2%', width: '13%', transform: 'translateX(-50%)' }} />
+        <Layer src={`${SCENE}/lantern-hang.webp`} z={6} f={30} order={6} float pos={{ left: '19%', top: '-2%', width: '15%', transform: 'translateX(-50%)' }} />
+        <Layer src={`${SCENE}/lantern-hang.webp`} z={6} f={34} order={6} float pos={{ left: '81%', top: '-2%', width: '13%', transform: 'translateX(-50%)' }} />
 
         {/* foreground florals */}
-        <Layer src={`${SCENE}/florals.webp`} z={7} f={40} pos={{ left: '50%', bottom: '-3%', width: '108%', transform: 'translateX(-50%)' }} />
+        <Layer src={`${SCENE}/florals.webp`} z={7} f={40} order={7} pos={{ left: '50%', bottom: '-3%', width: '108%', transform: 'translateX(-50%)' }} />
       </div>
+
+      {/* cinematic curtain that lifts once everything is loaded */}
+      <div className="scene-curtain" aria-hidden="true" />
     </main>
   )
 }
