@@ -123,9 +123,10 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
         {/* legibility scrim */}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(14,10,6,0.42) 0%, rgba(14,10,6,0.8) 52%, rgba(14,10,6,0.96) 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, background: tint, mixBlendMode: 'overlay' }} />
-        {/* hanging lanterns framing the top */}
-        <BLayer src={`${SCENE}/lantern-hang.webp`} f={20} float pos={{ left: '11%', top: '-1%', width: '13%', transform: 'translateX(-50%)' }} />
-        <BLayer src={`${SCENE}/lantern-hang.webp`} f={24} float pos={{ left: '89%', top: '-1%', width: '11%', transform: 'translateX(-50%)' }} />
+        {/* garland framing the top */}
+        <BLayer src={`${SCENE}/garland-top.webp`} f={16} pos={{ left: '50%', top: '0', width: '116%', transform: 'translateX(-50%)' }} />
+        {/* side-specific florals framing the bottom corners */}
+        <BLayer src={`${SCENE}/florals-${side}.webp`} f={24} pos={{ left: '50%', bottom: '0', width: '112%', transform: 'translateX(-50%)' }} opacity={0.95} />
       </div>
 
       {/* ── nav ── */}
