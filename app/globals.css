@@ -222,77 +222,13 @@ body {
   .layer-fade, .scene-curtain { transition: none; }
 }
 
-/* ─── Door intro sequence ────────────────────────────────── */
-.door-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 60;
-  overflow: hidden;
-  background: #0e0a06;
-}
-.door-leaf {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: auto;
-  transition: transform 1.5s cubic-bezier(0.5, 0, 0.75, 0.2), opacity 1.5s ease-in;
-  will-change: transform, opacity;
-}
-.door-leaf.left  { right: 50%; transform-origin: left center; }
-.door-leaf.right { left: 50%; transform-origin: right center; }
-/* opening: push through — leaves scale up, part, and fade */
-.scene-root.opening .door-leaf.left,
-.scene-root.arrived .door-leaf.left  { transform: translateX(-34%) scale(1.7); opacity: 0; }
-.scene-root.opening .door-leaf.right,
-.scene-root.arrived .door-leaf.right { transform: translateX(34%) scale(1.7); opacity: 0; }
-.scene-root.arrived .door-overlay { display: none; }
-
-/* warm light flaring along the seam as it opens */
-.door-seam {
-  position: absolute;
-  top: 0; left: 50%;
-  width: 3px; height: 100%;
-  transform: translateX(-50%);
-  background: linear-gradient(180deg, transparent, rgba(255,210,120,0.9), transparent);
-  opacity: 0;
-  filter: blur(2px);
-  transition: opacity 0.5s ease, width 1.2s ease;
-}
-.scene-root.opening .door-seam { opacity: 1; width: 40px; }
-
-/* door tap hint */
-.door-hint {
-  position: absolute;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 40px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  color: #f3e9d2;
-  transition: opacity 0.6s ease;
-}
-.scene-root.opening .door-hint { opacity: 0; }
-@keyframes hintGlow {
-  0%, 100% { opacity: 0.7; text-shadow: 0 0 10px rgba(201,168,76,0.3); }
-  50%      { opacity: 1;   text-shadow: 0 0 18px rgba(232,213,163,0.7); }
-}
-.door-hint .glow { animation: hintGlow 2s ease-in-out infinite; }
-
-/* forward camera dolly: scene starts pushed-in and settles */
-.scene-frame { transition: transform 1.7s cubic-bezier(0.22, 1, 0.36, 1); transform-origin: 50% 88%; }
-
-@media (prefers-reduced-motion: reduce) {
-  .door-leaf, .door-seam, .door-hint, .scene-frame { transition: none; }
-  .door-hint .glow { animation: none; }
-}
-
 /* ─── Scene entry cue ────────────────────────────────────── */
 .scene-cue {
   opacity: 0;
   transition: opacity 1s ease;
   transition-delay: 1.3s;
 }
-.scene-root.arrived .scene-cue { opacity: 1; }
+.scene-root.ready .scene-cue { opacity: 1; }
 .scene-root.choosing .scene-cue { opacity: 0; transition-delay: 0s; pointer-events: none; }
 @keyframes cuePulse {
   0%, 100% { transform: translateY(0); opacity: 0.7; }

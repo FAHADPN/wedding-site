@@ -9,9 +9,8 @@ import Link from 'next/link'
 const SCENE = '/scene'
 
 const SRCS = [
-  'sky.webp', 'palace-far.webp', 'palace.webp', 'path.webp', 'lanterns-sky.webp',
+  'sky.webp', 'palace-far.webp', 'palace.webp', 'lanterns-sky.webp',
   'couple.webp', 'arch.webp', 'lantern-hang.webp', 'florals.webp',
-  'door-left.webp', 'door-right.webp',
 ]
 
 /* A single depth layer. `pos` positions the OUTER wrapper (incl. centering);
@@ -63,21 +62,6 @@ export default function ParallaxScene() {
   const rootRef = useRef(null)
   const [ready, setReady] = useState(false)
   const [choosing, setChoosing] = useState(false)
-  const [phase, setPhase] = useState('closed') // closed | opening | arrived
-
-  // returning visitors (this session) skip straight in
-  useEffect(() => {
-    try { if (sessionStorage.getItem('entered')) setPhase('arrived') } catch {}
-  }, [])
-
-  const openDoors = () => {
-    if (phase !== 'closed') return
-    setPhase('opening')
-    setTimeout(() => {
-      setPhase('arrived')
-      try { sessionStorage.setItem('entered', '1') } catch {}
-    }, 1650)
-  }
 
   /* preload every layer, then trigger the staggered entrance */
   useEffect(() => {
@@ -141,18 +125,16 @@ export default function ParallaxScene() {
   return (
     <main
       ref={rootRef}
-      className={`scene-root ${phase}${ready ? ' ready' : ''}${choosing ? ' choosing' : ''}`}
+      className={`scene-root${ready ? ' ready' : ''}${choosing ? ' choosing' : ''}`}
       style={{ position: 'relative', height: '100dvh', overflow: 'hidden', backgroundColor: '#0e0a06' }}
     >
       {/* full-bleed sky backdrop */}
       <Layer src={`${SCENE}/sky.webp`} z={0} f={6} order={0} cover pos={{ inset: 0 }} />
 
       {/* framed scene column (arch aspect); covers portrait, portal on desktop */}
-      <div className="scene-frame" style={{ transform: `translate(-50%, -50%) scale(${phase === 'closed' ? 1.16 : 1})` }}>
+      <div className="scene-frame">
         <Layer src={`${SCENE}/palace-far.webp`}   z={1} f={10} order={1} pos={{ left: '50%', bottom: '12%', width: '132%', transform: 'translateX(-50%)' }} />
         <Layer src={`${SCENE}/palace.webp`}        z={2} f={16} order={2} pos={{ left: '50%', bottom: '8%',  width: '78%',  transform: 'translateX(-50%)' }} />
-        {/* carpet path leading to the palace, behind the couple */}
-        <Layer src={`${SCENE}/path.webp`}          z={3} f={20} order={2} pos={{ left: '50%', bottom: '0%', width: '60%', transform: 'translateX(-50%)' }} />
         {/* floating lanterns sit BEHIND the couple now */}
         <Layer src={`${SCENE}/lanterns-sky.webp`}  z={3} f={14} order={3} float pos={{ left: '50%', top: '-3%', width: '100%', transform: 'translateX(-50%)' }} />
         <Layer src={`${SCENE}/couple.webp`}        z={4} f={24} order={4} pos={{ left: '50%', bottom: '7%', width: '34%', transform: 'translateX(-50%)' }} alt="The couple before the palace" />
@@ -170,21 +152,6 @@ export default function ParallaxScene() {
 
       {/* cinematic curtain that lifts once everything is loaded */}
       <div className="scene-curtain" aria-hidden="true" />
-
-      {/* door intro — tap to open, push through to the scene */}
-      {phase !== 'arrived' && (
-        <div className="door-overlay" onClick={openDoors} role="button" tabIndex={0}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') openDoors() }}
-          aria-label="Tap to open the invitation">
-          <img className="door-leaf left" src={`${SCENE}/door-left.webp`} alt="" aria-hidden="true" />
-          <img className="door-leaf right" src={`${SCENE}/door-right.webp`} alt="" aria-hidden="true" />
-          <div className="door-seam" aria-hidden="true" />
-          <div className="door-hint">
-            <span className="glow" style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.34em' }}>Tap to open</span>
-            <svg className="glow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8D5A3" strokeWidth="1.6"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
-          </div>
-        </div>
-      )}
 
       {/* entry cue */}
       <button
