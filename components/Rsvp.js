@@ -65,10 +65,16 @@ const GOLD = '#C9A84C'
 const MUTED = '#9B7B3A'
 
 /* ─── Component ────────────────────────────────────────────────── */
-export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
+export default function Rsvp({ side = 'bride', isMl = false, lang = 'en', dark = false }) {
   const t = L[isMl ? 'ml' : 'en']
   const bodyFont = isMl ? 'var(--font-noto-ml)' : 'var(--font-cormorant)'
   const showTransport = side === 'groom'
+
+  // theme tokens
+  const CARD = dark ? 'rgba(20,14,8,0.6)' : '#fff'
+  const FG = dark ? '#F3E9D2' : '#2C1810'
+  const SUB = dark ? '#d8c79a' : '#5C4033'
+  const LABEL = dark ? '#C9A84C' : MUTED
 
   const [form, setForm] = useState({
     name: '', place: '', whatsapp: '', relation: '', attending: 'yes', guests: '1',
@@ -84,7 +90,7 @@ export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
 
   const labelStyle = {
     display: 'block',
-    color: MUTED,
+    color: LABEL,
     fontSize: '0.72rem',
     textTransform: isMl ? 'none' : 'uppercase',
     letterSpacing: isMl ? '0.03em' : '0.16em',
@@ -107,8 +113,8 @@ export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
           minHeight: '46px',
           padding: '10px 12px',
           border: `1px solid ${active ? GOLD : 'rgba(201,168,76,0.32)'}`,
-          background: active ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.5)',
-          color: active ? '#8B6914' : MUTED,
+          background: active ? 'rgba(201,168,76,0.18)' : (dark ? 'rgba(20,14,8,0.4)' : 'rgba(255,255,255,0.5)'),
+          color: active ? (dark ? '#F3E9D2' : '#8B6914') : LABEL,
           fontFamily: bodyFont,
           fontSize: isMl ? '0.95rem' : '0.95rem',
           fontWeight: active ? 600 : 400,
@@ -123,7 +129,7 @@ export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
 
   const TransportRow = ({ field, label }) => (
     <div style={{ marginBottom: '18px' }}>
-      <p style={{ color: '#5C4033', fontSize: isMl ? '0.92rem' : '0.95rem', fontFamily: bodyFont, lineHeight: 1.5, marginBottom: '10px' }}>
+      <p style={{ color: SUB, fontSize: isMl ? '0.92rem' : '0.95rem', fontFamily: bodyFont, lineHeight: 1.5, marginBottom: '10px' }}>
         {label}
       </p>
       <div style={{ display: 'flex', gap: '10px', maxWidth: '220px' }}>
@@ -197,20 +203,20 @@ export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
       <section
         aria-live="polite"
         style={{
-          background: '#fff',
+          background: CARD,
           border: `1px solid rgba(201,168,76,0.22)`,
-          boxShadow: '0 4px 32px rgba(201,168,76,0.07)',
+          boxShadow: dark ? 'none' : '0 4px 32px rgba(201,168,76,0.07)',
           padding: '40px 28px',
           marginBottom: '36px',
           textAlign: 'center',
         }}
       >
         <div className="anim-shimmer" style={{ color: GOLD, fontSize: '1.6rem', marginBottom: '14px' }}>✦</div>
-        <h3 style={{ fontFamily: bodyFont, color: '#2C1810', fontSize: isMl ? '1.4rem' : '1.7rem', fontWeight: 400, fontStyle: isMl ? 'normal' : 'italic', marginBottom: '12px' }}>
+        <h3 style={{ fontFamily: bodyFont, color: FG, fontSize: isMl ? '1.4rem' : '1.7rem', fontWeight: 400, fontStyle: isMl ? 'normal' : 'italic', marginBottom: '12px' }}>
           {t.successTitle}
         </h3>
         <div className="divider" style={{ width: '56px', margin: '0 auto 16px' }} />
-        <p style={{ color: '#5C4033', fontSize: isMl ? '0.92rem' : '1rem', fontFamily: bodyFont, lineHeight: 1.7, maxWidth: '380px', margin: '0 auto' }}>
+        <p style={{ color: SUB, fontSize: isMl ? '0.92rem' : '1rem', fontFamily: bodyFont, lineHeight: 1.7, maxWidth: '380px', margin: '0 auto' }}>
           {t.successMsg}
         </p>
       </section>
@@ -225,7 +231,7 @@ export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
         <p style={{ color: GOLD, fontSize: '0.72rem', textTransform: isMl ? 'none' : 'uppercase', letterSpacing: isMl ? '0.04em' : '0.28em', marginBottom: '6px', fontFamily: isMl ? 'var(--font-noto-ml)' : undefined }}>
           {t.heading}
         </p>
-        <p style={{ color: MUTED, fontSize: isMl ? '0.95rem' : '1.05rem', fontFamily: bodyFont, fontStyle: isMl ? 'normal' : 'italic' }}>
+        <p style={{ color: LABEL, fontSize: isMl ? '0.95rem' : '1.05rem', fontFamily: bodyFont, fontStyle: isMl ? 'normal' : 'italic' }}>
           {t.sub}
         </p>
       </div>
@@ -235,9 +241,9 @@ export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
         onSubmit={handleSubmit}
         noValidate
         style={{
-          background: '#fff',
+          background: CARD,
           border: `1px solid rgba(201,168,76,0.22)`,
-          boxShadow: '0 4px 32px rgba(201,168,76,0.07)',
+          boxShadow: dark ? 'none' : '0 4px 32px rgba(201,168,76,0.07)',
           padding: '32px 26px',
         }}
       >
@@ -247,7 +253,7 @@ export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
           <input
             id="rsvp-name" name="name" type="text" autoComplete="name"
             value={form.name} onChange={onInput('name')}
-            className="rsvp-input" aria-invalid={!!errors.name}
+            className={`rsvp-input${dark ? " dark" : ""}`} aria-invalid={!!errors.name}
             style={{ fontFamily: bodyFont, borderColor: errors.name ? '#C0392B' : undefined }}
           />
         </div>
@@ -258,7 +264,7 @@ export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
           <input
             id="rsvp-place" name="place" type="text" autoComplete="address-level2"
             value={form.place} onChange={onInput('place')}
-            className="rsvp-input" aria-invalid={!!errors.place}
+            className={`rsvp-input${dark ? " dark" : ""}`} aria-invalid={!!errors.place}
             style={{ fontFamily: bodyFont, borderColor: errors.place ? '#C0392B' : undefined }}
           />
         </div>
@@ -270,7 +276,7 @@ export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
             id="rsvp-whatsapp" name="whatsapp" type="tel" inputMode="tel" autoComplete="tel"
             placeholder="+91 9XXXXXXXXX"
             value={form.whatsapp} onChange={onInput('whatsapp')}
-            className="rsvp-input" aria-invalid={!!errors.whatsapp}
+            className={`rsvp-input${dark ? " dark" : ""}`} aria-invalid={!!errors.whatsapp}
             style={{ fontFamily: bodyFont, borderColor: errors.whatsapp ? '#C0392B' : undefined }}
           />
         </div>
@@ -301,7 +307,7 @@ export default function Rsvp({ side = 'bride', isMl = false, lang = 'en' }) {
             <input
               id="rsvp-guests" name="guests" type="number" inputMode="numeric" min="1" max="20"
               value={form.guests} onChange={onInput('guests')}
-              className="rsvp-input"
+              className={`rsvp-input${dark ? " dark" : ""}`}
               style={{ fontFamily: bodyFont, maxWidth: '120px' }}
             />
           </div>
