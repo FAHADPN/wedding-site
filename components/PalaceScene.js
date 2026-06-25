@@ -8,10 +8,9 @@ import Link from 'next/link'
 
 const SCENE = '/scene'
 
-const SRCS = [
-  'sky.webp', 'palace-far.webp', 'palace.webp', 'lanterns-sky.webp',
-  'couple.webp', 'arch.webp', 'lantern-hang.webp', 'florals.webp',
-]
+const SHARED = ['palace.webp', 'couple.webp', 'lanterns-sky.webp']
+const MOBILE = ['sky.webp', 'palace-far.webp', 'arch.webp', 'florals.webp', 'lantern-hang.webp']
+const DESKTOP = ['sky-wide.webp', 'arch-wide.webp', 'florals-wide.webp']
 
 /* bilingual choose-overlay strings */
 const CHOOSE = {
@@ -76,15 +75,27 @@ export default function PalaceScene() {
   const [ready, setReady] = useState(false)
   const [choosing, setChoosing] = useState(false)
   const [lang, setLang] = useState('en')
+  const [desktop, setDesktop] = useState(false)
   const isMl = lang === 'ml'
   const c = CHOOSE[lang]
 
-  /* preload every layer, then trigger the staggered entrance */
+  /* track viewport: wide screens get the full-bleed landscape layout */
   useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const apply = () => setDesktop(mq.matches)
+    apply()
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [])
+
+  /* preload the layers for this viewport, then trigger the staggered entrance */
+  useEffect(() => {
+    const desk = window.matchMedia('(min-width: 1024px)').matches
+    const srcs = [...SHARED, ...(desk ? DESKTOP : MOBILE)]
     let done = false
     const finish = () => { if (!done) { done = true; setReady(true) } }
-    let left = SRCS.length
-    SRCS.forEach((s) => {
+    let left = srcs.length
+    srcs.forEach((s) => {
       const img = new window.Image()
       const tick = () => { if (--left <= 0) finish() }
       img.onload = tick
@@ -124,23 +135,32 @@ export default function PalaceScene() {
       className={`scene-root${ready ? ' ready' : ''}${choosing ? ' choosing' : ''}`}
       style={{ position: 'relative', height: '100dvh', overflow: 'hidden', backgroundColor: '#0b0805' }}
     >
-      {/* full-bleed sky backdrop — anchored to its night top so wide screens stay dark */}
-      <Layer src={`${SCENE}/sky.webp`} z={0} f={6} order={0} cover objPos="center top" pos={{ inset: 0 }} />
-
-      {/* dark side-vignette: frames the portrait scene on wide screens, invisible on phones */}
-      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none', background: 'linear-gradient(90deg, rgba(11,8,5,0.97) 0%, rgba(11,8,5,0.6) 16%, transparent 30%, transparent 70%, rgba(11,8,5,0.6) 84%, rgba(11,8,5,0.97) 100%)' }} />
-
-      {/* framed scene column (arch aspect); covers portrait, portal on desktop */}
-      <div className="scene-frame" style={{ zIndex: 2 }}>
-        <Layer src={`${SCENE}/palace-far.webp`}   z={1} f={10} order={1} pos={{ left: '50%', bottom: '12%', width: '132%', transform: 'translateX(-50%)' }} />
-        <Layer src={`${SCENE}/palace.webp`}        z={2} f={16} order={2} pos={{ left: '50%', bottom: '8%',  width: '78%',  transform: 'translateX(-50%)' }} />
-        <Layer src={`${SCENE}/lanterns-sky.webp`}  z={3} f={14} order={3} float pos={{ left: '50%', top: '-3%', width: '100%', transform: 'translateX(-50%)' }} />
-        <Layer src={`${SCENE}/couple.webp`}        z={4} f={24} order={4} pos={{ left: '50%', bottom: '7%', width: '34%', transform: 'translateX(-50%)' }} alt="The couple before the palace" />
-        <Layer src={`${SCENE}/arch.webp`} z={5} f={8} order={5} cover pos={{ inset: 0 }} />
-        <Layer src={`${SCENE}/lantern-hang.webp`} z={6} f={30} order={6} float pos={{ left: '19%', top: '-2%', width: '15%', transform: 'translateX(-50%)' }} />
-        <Layer src={`${SCENE}/lantern-hang.webp`} z={6} f={34} order={6} float pos={{ left: '81%', top: '-2%', width: '13%', transform: 'translateX(-50%)' }} />
-        <Layer src={`${SCENE}/florals.webp`} z={7} f={40} order={7} pos={{ left: '50%', bottom: '-3%', width: '108%', transform: 'translateX(-50%)' }} />
-      </div>
+      {desktop ? (
+        /* ── full-bleed widescreen scene ── */
+        <>
+          <Layer src={`${SCENE}/sky-wide.webp`} z={0} f={3} order={0} cover objPos="center" pos={{ inset: 0 }} />
+          <Layer src={`${SCENE}/palace.webp`} z={1} f={12} order={1} pos={{ left: '50%', bottom: '16%', width: '30%', transform: 'translateX(-50%)' }} />
+          <Layer src={`${SCENE}/lanterns-sky.webp`} z={2} f={16} order={2} float pos={{ left: '50%', top: '4%', width: '62%', transform: 'translateX(-50%)' }} />
+          <Layer src={`${SCENE}/couple.webp`} z={3} f={26} order={3} pos={{ left: '50%', bottom: '9%', width: '10%', transform: 'translateX(-50%)' }} alt="The couple before the palace" />
+          <Layer src={`${SCENE}/arch-wide.webp`} z={5} f={6} order={4} cover pos={{ inset: 0 }} />
+          <Layer src={`${SCENE}/florals-wide.webp`} z={6} f={30} order={5} pos={{ left: '50%', bottom: '0', width: '100%', transform: 'translateX(-50%)' }} />
+        </>
+      ) : (
+        /* ── portrait phone scene ── */
+        <>
+          <Layer src={`${SCENE}/sky.webp`} z={0} f={6} order={0} cover objPos="center top" pos={{ inset: 0 }} />
+          <div className="scene-frame" style={{ zIndex: 2 }}>
+            <Layer src={`${SCENE}/palace-far.webp`}   z={1} f={10} order={1} pos={{ left: '50%', bottom: '12%', width: '132%', transform: 'translateX(-50%)' }} />
+            <Layer src={`${SCENE}/palace.webp`}        z={2} f={16} order={2} pos={{ left: '50%', bottom: '8%',  width: '78%',  transform: 'translateX(-50%)' }} />
+            <Layer src={`${SCENE}/lanterns-sky.webp`}  z={3} f={14} order={3} float pos={{ left: '50%', top: '-3%', width: '100%', transform: 'translateX(-50%)' }} />
+            <Layer src={`${SCENE}/couple.webp`}        z={4} f={24} order={4} pos={{ left: '50%', bottom: '7%', width: '34%', transform: 'translateX(-50%)' }} alt="The couple before the palace" />
+            <Layer src={`${SCENE}/arch.webp`} z={5} f={8} order={5} cover pos={{ inset: 0 }} />
+            <Layer src={`${SCENE}/lantern-hang.webp`} z={6} f={30} order={6} float pos={{ left: '19%', top: '-2%', width: '15%', transform: 'translateX(-50%)' }} />
+            <Layer src={`${SCENE}/lantern-hang.webp`} z={6} f={34} order={6} float pos={{ left: '81%', top: '-2%', width: '13%', transform: 'translateX(-50%)' }} />
+            <Layer src={`${SCENE}/florals.webp`} z={7} f={40} order={7} pos={{ left: '50%', bottom: '-3%', width: '108%', transform: 'translateX(-50%)' }} />
+          </div>
+        </>
+      )}
 
       {/* cinematic curtain that lifts once everything is loaded */}
       <div className="scene-curtain" aria-hidden="true" />
