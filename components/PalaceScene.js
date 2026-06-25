@@ -141,7 +141,7 @@ export default function PalaceScene() {
           <Layer src={`${SCENE}/sky-wide.webp`} z={0} f={3} order={0} cover objPos="center" pos={{ inset: 0 }} />
           <Layer src={`${SCENE}/palace.webp`} z={1} f={10} order={1} pos={{ left: '50%', bottom: '12%', width: '42%', transform: 'translateX(-50%)' }} />
           <Layer src={`${SCENE}/lanterns-sky.webp`} z={2} f={16} order={2} float pos={{ left: '50%', top: '5%', width: '38%', transform: 'translateX(-50%)' }} />
-          <Layer src={`${SCENE}/couple.webp`} z={3} f={24} order={3} pos={{ left: '50%', bottom: '8%', width: '13%', transform: 'translateX(-50%)' }} alt="The couple before the palace" />
+          <Layer src={`${SCENE}/couple.webp`} z={3} f={24} order={3} pos={{ left: '50%', bottom: '8%', width: '16.5%', transform: 'translateX(-50%)' }} alt="The couple before the palace" />
           <Layer src={`${SCENE}/arch-wide.webp`} z={5} f={6} order={4} cover pos={{ inset: 0 }} />
           <Layer src={`${SCENE}/florals-wide.webp`} z={6} f={30} order={5} pos={{ left: '50%', bottom: '0', width: '100%', transform: 'translateX(-50%)' }} />
         </>
