@@ -77,6 +77,7 @@ function SideCard({ href, title, arabic, sub, time, glyph, isMl, delay }) {
 export default function PalaceScene() {
   const rootRef = useRef(null)
   const [ready, setReady] = useState(false)
+  const [opened, setOpened] = useState(false)
   const [choosing, setChoosing] = useState(false)
   const [lang, setLang] = useState('en')
   const [desktop, setDesktop] = useState(false)
@@ -136,7 +137,7 @@ export default function PalaceScene() {
   return (
     <main
       ref={rootRef}
-      className={`scene-root${ready ? ' ready' : ''}${choosing ? ' choosing' : ''}`}
+      className={`scene-root${ready ? ' ready' : ''}${opened ? ' opened' : ''}${choosing ? ' choosing' : ''}`}
       style={{ position: 'relative', height: '100dvh', overflow: 'hidden', backgroundColor: '#0b0805' }}
     >
       {desktop ? (
@@ -185,9 +186,31 @@ export default function PalaceScene() {
         </div>
       </div>
 
-      {/* loading screen that lifts once everything is loaded */}
-      <div className="scene-curtain" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {!ready && <Loader />}
+      {/* loading screen → "tap to open" splash → lifts on tap (also unlocks the music) */}
+      <div
+        className="scene-curtain"
+        role={ready && !opened ? 'button' : undefined}
+        tabIndex={ready && !opened ? 0 : undefined}
+        aria-label={ready && !opened ? 'Tap to open the invitation' : undefined}
+        onClick={() => { if (ready) setOpened(true) }}
+        onKeyDown={(e) => { if (ready && (e.key === 'Enter' || e.key === ' ')) setOpened(true) }}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: ready && !opened ? 'pointer' : 'default', pointerEvents: opened ? 'none' : 'auto' }}
+      >
+        {!ready ? (
+          <Loader />
+        ) : !opened && (
+          <div style={{ textAlign: 'center', padding: '24px' }}>
+            <div className="arabic anim-shimmer" lang="ar" aria-hidden="true" style={{ color: '#E8D5A3', fontSize: 'clamp(1.6rem, 8vw, 2.6rem)', lineHeight: 1.3, marginBottom: '20px', maxWidth: '92vw' }}>﷽</div>
+            <h1 style={{ fontFamily: 'var(--font-script)', color: '#F8F1DF', fontWeight: 400, lineHeight: 1.05, margin: '0 0 28px', whiteSpace: 'nowrap', fontSize: 'clamp(2.4rem, 12vw, 4.2rem)', textShadow: '0 2px 22px rgba(0,0,0,0.6)' }}>
+              Fahad <span style={{ fontSize: '0.62em', color: '#E8D5A3', verticalAlign: 'middle' }}>&amp;</span> Nadha
+            </h1>
+            <div className="tap-pulse" style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '9px' }}>
+              <div style={{ width: '52px', height: '1px', background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)' }} />
+              <span style={{ color: '#E8D5A3', fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.36em' }}>Tap to Open</span>
+              <div style={{ width: '52px', height: '1px', background: 'linear-gradient(90deg, transparent, #C9A84C, transparent)' }} />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* entry cue */}
