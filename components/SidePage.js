@@ -73,6 +73,7 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
   const [lang, setLang] = useState('en')
   const [ready, setReady] = useState(false)
   const [desktop, setDesktop] = useState(false)
+  const [toast, setToast] = useState('')
   const t = T[lang]
   const isMl = lang === 'ml'
   const bodyFont = isMl ? 'var(--font-noto-ml)' : 'var(--font-cormorant)'
@@ -97,6 +98,60 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
     color: GOLD_DEEP, fontSize: '0.72rem', textTransform: isMl ? 'none' : 'uppercase',
     letterSpacing: isMl ? '0.04em' : '0.26em', fontFamily: isMl ? 'var(--font-noto-ml)' : undefined, ...extra,
   })
+
+  const A = {
+    cal: isMl ? 'കലണ്ടറിൽ ചേർക്കുക' : 'Add to Calendar',
+    share: isMl ? 'പങ്കിടുക' : 'Share',
+    copied: isMl ? 'ലിങ്ക് പകർത്തി!' : 'Link copied!',
+  }
+
+  // build & download a universal .ics (English content for compatibility)
+  const addToCalendar = () => {
+    const en = T.en
+    const start = new Date(targetDate)
+    const end = new Date(start.getTime() + 3 * 60 * 60 * 1000)
+    const fmt = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
+    const esc = (s) => String(s).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n')
+    const ics = [
+      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Fahad Nadha Wedding//EN', 'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      `UID:${side}-fahad-nadha-2026@wedding`,
+      `DTSTAMP:${fmt(new Date())}`,
+      `DTSTART:${fmt(start)}`,
+      `DTEND:${fmt(end)}`,
+      `SUMMARY:${esc(`${en.event_name} — Fahad & Nadha`)}`,
+      `LOCATION:${esc(en.venue_val)}`,
+      `DESCRIPTION:${esc(`${en.invitation_body} ${en.event_name}.`)}`,
+      'END:VEVENT', 'END:VCALENDAR',
+    ].join('\r\n')
+    const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `Fahad-Nadha-${side === 'bride' ? 'Nikkah' : 'Reception'}.ics`
+    document.body.appendChild(a); a.click(); document.body.removeChild(a)
+    setTimeout(() => URL.revokeObjectURL(url), 1500)
+  }
+
+  const share = async () => {
+    const url = window.location.origin + '/'
+    const data = { title: 'Fahad & Nadha — Wedding Invitation', text: 'You are invited to our wedding, inshāAllah.', url }
+    if (navigator.share) {
+      try { await navigator.share(data) } catch {}
+    } else {
+      try {
+        await navigator.clipboard.writeText(url)
+        setToast(A.copied); setTimeout(() => setToast(''), 2500)
+      } catch {}
+    }
+  }
+
+  const actionBtn = {
+    display: 'inline-flex', alignItems: 'center', gap: '8px', minHeight: '44px',
+    border: `1px solid ${GOLD_DEEP}`, color: GOLD, background: 'rgba(16,11,7,0.5)',
+    padding: '11px 20px', fontSize: '0.66rem', textTransform: isMl ? 'none' : 'uppercase',
+    letterSpacing: isMl ? '0.04em' : '0.16em', cursor: 'pointer',
+    fontFamily: isMl ? 'var(--font-noto-ml)' : undefined,
+  }
 
   return (
     <main className={`scene-root${ready ? ' ready' : ''}`} style={{ position: 'relative', minHeight: '100dvh', backgroundColor: '#0e0a06', color: INK, overflowX: 'hidden' }}>
@@ -216,8 +271,24 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
           </Reveal>
         </section>
 
+        {/* add to calendar + share */}
+        <section style={{ maxWidth: '620px', margin: '0 auto', padding: '2vh 20px' }}>
+          <Reveal>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button type="button" onClick={addToCalendar} className="map-btn" style={actionBtn}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4" /></svg>
+                {A.cal}
+              </button>
+              <button type="button" onClick={share} className="map-btn" style={actionBtn}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" /></svg>
+                {A.share}
+              </button>
+            </div>
+          </Reveal>
+        </section>
+
         {/* countdown */}
-        <section style={{ maxWidth: '620px', margin: '0 auto', padding: '6vh 20px', textAlign: 'center' }}>
+        <section style={{ maxWidth: '620px', margin: '0 auto', padding: '4vh 20px 6vh', textAlign: 'center' }}>
           <Reveal>
             <p style={labelCaps({ marginBottom: '20px' })}>{t.countdown_label}</p>
             <Countdown targetDate={targetDate} labels={{ days: t.days, hours: t.hours, minutes: t.minutes, seconds: t.seconds }} isMl={isMl} />
@@ -248,6 +319,13 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
           </Reveal>
         </section>
       </div>
+
+      {/* toast */}
+      {toast && (
+        <div role="status" aria-live="polite" style={{ position: 'fixed', left: '50%', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 70px)', transform: 'translateX(-50%)', zIndex: 60, background: 'rgba(16,11,7,0.92)', border: '1px solid rgba(201,168,76,0.5)', color: GOLD, padding: '10px 20px', borderRadius: '999px', fontSize: '0.78rem', letterSpacing: '0.04em', fontFamily: bodyFont, boxShadow: '0 6px 24px rgba(0,0,0,0.5)' }}>
+          {toast}
+        </div>
+      )}
     </main>
   )
 }
