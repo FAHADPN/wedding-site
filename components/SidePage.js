@@ -16,13 +16,13 @@ const SUB = '#d8c79a'
 const QURAN_AR =
   'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ'
 
-/* parallax backdrop layer */
-function BLayer({ src, f, pos, cover, float, opacity = 1 }) {
+/* parallax layer (backdrop or hero decoration) */
+function BLayer({ src, f, pos, cover, float, opacity = 1, objPos = 'center bottom', z }) {
   return (
-    <div className="layer-fade" style={{ position: 'absolute', ...pos }}>
+    <div className="layer-fade" style={{ position: 'absolute', zIndex: z, pointerEvents: 'none', ...pos }}>
       <div className="scene-layer" style={{ ['--f']: f, width: '100%', height: cover ? '100%' : 'auto' }}>
         <img src={src} alt="" aria-hidden="true" className={float ? 'lantern-drift' : undefined}
-          style={{ width: '100%', height: cover ? '100%' : 'auto', objectFit: cover ? 'cover' : 'contain', objectPosition: 'center bottom', display: 'block', opacity, animationDuration: float ? '7s' : undefined }} />
+          style={{ width: '100%', height: cover ? '100%' : 'auto', objectFit: cover ? 'cover' : 'contain', objectPosition: objPos, display: 'block', opacity, animationDuration: float ? '7s' : undefined }} />
       </div>
     </div>
   )
@@ -116,17 +116,13 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
     <main ref={rootRef} className={`scene-root${ready ? ' ready' : ''}`} style={{ position: 'relative', minHeight: '100dvh', backgroundColor: '#0e0a06', color: INK, overflowX: 'hidden' }}>
       {/* ── rich parallax backdrop ── */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden' }}>
-        <BLayer src={`${SCENE}/sky.webp`} f={4} cover pos={{ inset: 0 }} />
-        <BLayer src={`${SCENE}/palace-far.webp`} f={8} opacity={0.55} pos={{ left: '50%', bottom: '30%', width: '150%', transform: 'translateX(-50%)' }} />
-        <BLayer src={`${SCENE}/palace.webp`} f={13} opacity={0.85} pos={{ left: '50%', bottom: '26%', width: '74%', transform: 'translateX(-50%)' }} />
-        <BLayer src={`${SCENE}/lanterns-sky.webp`} f={10} float opacity={0.5} pos={{ left: '50%', top: '0%', width: '100%', transform: 'translateX(-50%)' }} />
+        <BLayer src={`${SCENE}/sky.webp`} f={4} cover objPos="center top" pos={{ inset: 0 }} />
+        <BLayer src={`${SCENE}/palace-far.webp`} f={8} opacity={0.5} pos={{ left: '50%', bottom: '30%', width: '150%', transform: 'translateX(-50%)' }} />
+        <BLayer src={`${SCENE}/palace.webp`} f={13} opacity={0.8} pos={{ left: '50%', bottom: '26%', width: '74%', transform: 'translateX(-50%)' }} />
+        <BLayer src={`${SCENE}/lanterns-sky.webp`} f={10} float opacity={0.45} pos={{ left: '50%', top: '0%', width: '100%', transform: 'translateX(-50%)' }} />
         {/* legibility scrim */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(14,10,6,0.42) 0%, rgba(14,10,6,0.8) 52%, rgba(14,10,6,0.96) 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(14,10,6,0.5) 0%, rgba(14,10,6,0.86) 52%, rgba(14,10,6,0.97) 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, background: tint, mixBlendMode: 'overlay' }} />
-        {/* garland framing the top */}
-        <BLayer src={`${SCENE}/garland-top.webp`} f={16} pos={{ left: '50%', top: '0', width: '116%', transform: 'translateX(-50%)' }} />
-        {/* side-specific florals framing the bottom corners */}
-        <BLayer src={`${SCENE}/florals-${side}.webp`} f={24} pos={{ left: '50%', bottom: '0', width: '112%', transform: 'translateX(-50%)' }} opacity={0.95} />
       </div>
 
       {/* ── nav ── */}
@@ -138,20 +134,25 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
       {/* ── content ── */}
       <div style={{ position: 'relative', zIndex: 1 }}>
 
-        {/* hero */}
-        <section style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '90px 18px 40px' }}>
-          <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: GOLD, fontSize: 'clamp(1.5rem, 7vw, 2.6rem)', lineHeight: 1.3, marginBottom: '22px', maxWidth: '100%' }}>﷽</div>
-          <p style={labelCaps({ marginBottom: '18px' })}>{t.side_label}</p>
-          <h1 style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: 'clamp(2rem, 6.5vw, 3rem)', fontWeight: 300, lineHeight: 1.12, marginBottom: '12px', textShadow: '0 2px 24px rgba(0,0,0,0.5)' }}>{t.groom_name}</h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', justifyContent: 'center', marginBottom: '12px' }}>
-            <div style={{ width: '52px', height: '1px', background: `linear-gradient(90deg, transparent, ${GOLD_DEEP}, transparent)` }} />
-            <span style={{ color: GOLD, fontSize: '1.2rem' }}>✦</span>
-            <div style={{ width: '52px', height: '1px', background: `linear-gradient(90deg, transparent, ${GOLD_DEEP}, transparent)` }} />
-          </div>
-          <h1 style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: 'clamp(2rem, 6.5vw, 3rem)', fontWeight: 300, lineHeight: 1.12, marginBottom: '20px', textShadow: '0 2px 24px rgba(0,0,0,0.5)' }}>{t.bride_name}</h1>
-          <p style={{ color: SUB, fontSize: isMl ? '0.95rem' : '0.85rem', letterSpacing: isMl ? '0.04em' : '0.22em', fontFamily: bodyFont }}>{t.date_val}</p>
+        {/* hero — garland + florals frame only this section, then scroll away */}
+        <section style={{ position: 'relative', overflow: 'hidden', minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '90px 18px 40px' }}>
+          <BLayer src={`${SCENE}/garland-top.webp`} f={16} z={0} pos={{ left: '50%', top: '0', width: '118%', transform: 'translateX(-50%)' }} />
+          <BLayer src={`${SCENE}/florals-${side}.webp`} f={24} z={0} opacity={0.95} pos={{ left: '50%', bottom: '0', width: '116%', transform: 'translateX(-50%)' }} />
 
-          <div className="chev" style={{ position: 'absolute', bottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: GOLD, fontSize: 'clamp(1.5rem, 7vw, 2.6rem)', lineHeight: 1.3, marginBottom: '22px', maxWidth: '100%' }}>﷽</div>
+            <p style={labelCaps({ marginBottom: '18px' })}>{t.side_label}</p>
+            <h1 style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: 'clamp(2rem, 6.5vw, 3rem)', fontWeight: 300, lineHeight: 1.12, marginBottom: '12px', textShadow: '0 2px 24px rgba(0,0,0,0.6)' }}>{t.groom_name}</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', justifyContent: 'center', marginBottom: '12px' }}>
+              <div style={{ width: '52px', height: '1px', background: `linear-gradient(90deg, transparent, ${GOLD_DEEP}, transparent)` }} />
+              <span style={{ color: GOLD, fontSize: '1.2rem' }}>✦</span>
+              <div style={{ width: '52px', height: '1px', background: `linear-gradient(90deg, transparent, ${GOLD_DEEP}, transparent)` }} />
+            </div>
+            <h1 style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: 'clamp(2rem, 6.5vw, 3rem)', fontWeight: 300, lineHeight: 1.12, marginBottom: '20px', textShadow: '0 2px 24px rgba(0,0,0,0.6)' }}>{t.bride_name}</h1>
+            <p style={{ color: SUB, fontSize: isMl ? '0.95rem' : '0.85rem', letterSpacing: isMl ? '0.04em' : '0.22em', fontFamily: bodyFont }}>{t.date_val}</p>
+          </div>
+
+          <div className="chev" style={{ position: 'absolute', zIndex: 1, bottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
             <span style={{ color: GOLD_DEEP, fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.3em' }}>Scroll</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={GOLD_DEEP} strokeWidth="1.5"><path d="M6 9l6 6 6-6" /></svg>
           </div>
