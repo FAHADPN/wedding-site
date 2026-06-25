@@ -18,12 +18,12 @@ const QURAN_AR =
   'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ'
 
 /* parallax layer (backdrop or hero decoration) */
-function BLayer({ src, f, pos, cover, float, opacity = 1, objPos = 'center bottom', z }) {
+function BLayer({ src, f, pos, cover, float, opacity = 1, objPos = 'center bottom', z, filter, mask }) {
   return (
     <div className="layer-fade" style={{ position: 'absolute', zIndex: z, pointerEvents: 'none', ...pos }}>
       <div className="scene-layer" style={{ ['--f']: f, width: '100%', height: cover ? '100%' : 'auto' }}>
         <img src={src} alt="" aria-hidden="true" className={float ? 'lantern-drift' : undefined}
-          style={{ width: '100%', height: cover ? '100%' : 'auto', objectFit: cover ? 'cover' : 'contain', objectPosition: objPos, display: 'block', opacity, animationDuration: float ? '7s' : undefined }} />
+          style={{ width: '100%', height: cover ? '100%' : 'auto', objectFit: cover ? 'cover' : 'contain', objectPosition: objPos, display: 'block', opacity, animationDuration: float ? '7s' : undefined, filter, maskImage: mask, WebkitMaskImage: mask }} />
       </div>
     </div>
   )
@@ -83,7 +83,8 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
     const srcs = [
       desk ? 'sky-wide.webp' : 'sky.webp',
       'palace.webp', 'lanterns-sky.webp', `florals-${side}.webp`,
-      ...(desk ? [] : ['palace-far.webp']),
+      desk ? 'arch-wide.webp' : 'arch.webp',
+      ...(desk ? ['florals-wide.webp'] : ['palace-far.webp']),
     ]
     let left = srcs.length, done = false
     const finish = () => { if (!done) { done = true; setLoaded(true) } }
@@ -200,11 +201,6 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
         <div style={{ position: 'absolute', inset: 0, background: tint, mixBlendMode: 'overlay' }} />
       </div>
 
-      {/* ── subtle florals at the bottom corners (static) ── */}
-      <div aria-hidden="true" style={{ position: 'fixed', inset: 0, zIndex: 40, pointerEvents: 'none' }}>
-        <img src={`${SCENE}/florals-${side}.webp`} alt="" style={{ position: 'absolute', bottom: 0, left: '50%', width: '100%', transform: 'translateX(-50%)', display: 'block', opacity: 0.85 }} />
-      </div>
-
       {/* ── nav ── */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px' }}>
         <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', minHeight: '40px', padding: '8px 14px', borderRadius: '999px', background: 'rgba(10,7,4,0.62)', border: '1px solid rgba(201,168,76,0.4)', color: GOLD, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.2em', textDecoration: 'none', backdropFilter: 'blur(3px)', fontFamily: isMl ? 'var(--font-noto-ml)' : undefined }}>{t.back}</Link>
@@ -214,21 +210,39 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
       {/* ── content ── */}
       <div style={{ position: 'relative', zIndex: 1 }}>
 
-        {/* hero */}
-        <section style={{ position: 'relative', minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '96px 18px 40px' }}>
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            <p style={labelCaps({ marginBottom: '18px' })}>{t.side_label}</p>
-            <h1 style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: 'clamp(2rem, 6.5vw, 3rem)', fontWeight: 300, lineHeight: 1.12, marginBottom: '12px', textShadow: '0 2px 24px rgba(0,0,0,0.6)' }}>{t.groom_name}</h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', justifyContent: 'center', marginBottom: '12px' }}>
-              <div style={{ width: '52px', height: '1px', background: `linear-gradient(90deg, transparent, ${GOLD_DEEP}, transparent)` }} />
-              <span style={{ color: GOLD, fontSize: '1.2rem' }}>✦</span>
-              <div style={{ width: '52px', height: '1px', background: `linear-gradient(90deg, transparent, ${GOLD_DEEP}, transparent)` }} />
-            </div>
-            <h1 style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: 'clamp(2rem, 6.5vw, 3rem)', fontWeight: 300, lineHeight: 1.12, marginBottom: '20px', textShadow: '0 2px 24px rgba(0,0,0,0.6)' }}>{t.bride_name}</h1>
-            <p style={{ color: SUB, fontSize: isMl ? '0.95rem' : '0.85rem', letterSpacing: isMl ? '0.04em' : '0.22em', fontFamily: bodyFont }}>{t.date_val}</p>
+        {/* hero — arch-framed scene echoing the landing */}
+        <section style={{ position: 'relative', height: '100dvh', overflow: 'hidden' }}>
+          {desktop ? (
+            <>
+              <BLayer src={`${SCENE}/sky-wide.webp`} f={0} cover objPos="center" pos={{ inset: 0 }} />
+              <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.95} filter="blur(0.6px) saturate(0.97)" mask="linear-gradient(180deg, #000 0%, #000 84%, transparent 100%)" pos={{ left: '50%', bottom: '7%', width: 'min(78%, 122dvh)', transform: 'translateX(-50%)' }} />
+              <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.6} pos={{ left: '24%', top: '8%', width: '30%', transform: 'translateX(-50%)' }} />
+              <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.6} pos={{ left: '50%', top: '3%', width: '40%', transform: 'translateX(-50%)' }} />
+              <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.55} pos={{ left: '76%', top: '7%', width: '28%', transform: 'translateX(-50%)' }} />
+              <BLayer src={`${SCENE}/arch-wide.webp`} f={0} cover pos={{ inset: 0 }} />
+              <BLayer src={`${SCENE}/florals-wide.webp`} f={0} pos={{ left: '50%', bottom: 0, width: '100%', transform: 'translateX(-50%)' }} />
+            </>
+          ) : (
+            <>
+              <BLayer src={`${SCENE}/sky.webp`} f={0} cover objPos="center top" pos={{ inset: 0 }} />
+              <BLayer src={`${SCENE}/palace-far.webp`} f={0} opacity={0.6} pos={{ left: '50%', bottom: '12%', width: '132%', transform: 'translateX(-50%)' }} />
+              <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.95} pos={{ left: '50%', bottom: '8%', width: '78%', transform: 'translateX(-50%)' }} />
+              <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.6} pos={{ left: '50%', top: '-3%', width: '100%', transform: 'translateX(-50%)' }} />
+              <BLayer src={`${SCENE}/arch.webp`} f={0} cover pos={{ inset: 0 }} />
+              <BLayer src={`${SCENE}/florals-${side}.webp`} f={0} pos={{ left: '50%', bottom: '-3%', width: '108%', transform: 'translateX(-50%)' }} />
+            </>
+          )}
+
+          {/* names */}
+          <div style={{ position: 'absolute', zIndex: 9, top: 'clamp(80px, 12%, 150px)', left: '50%', transform: 'translateX(-50%)', width: '92%', maxWidth: '660px', textAlign: 'center' }}>
+            <p style={labelCaps({ marginBottom: '8px', color: GOLD })}>{t.side_label}</p>
+            <h1 style={{ fontFamily: 'var(--font-script)', color: INK, fontWeight: 400, lineHeight: 1.05, margin: '0 0 8px', whiteSpace: 'nowrap', fontSize: desktop ? 'clamp(3rem, 6vw, 5rem)' : 'clamp(2rem, 11vw, 3rem)', textShadow: '0 2px 22px rgba(0,0,0,0.75)' }}>
+              Fahad <span style={{ fontSize: '0.62em', color: GOLD, verticalAlign: 'middle' }}>&amp;</span> Nadha
+            </h1>
+            <p style={{ color: SUB, fontSize: isMl ? '0.95rem' : '0.82rem', letterSpacing: isMl ? '0.04em' : '0.24em', fontFamily: bodyFont, textShadow: '0 1px 10px rgba(0,0,0,0.8)' }}>{t.date_val}</p>
           </div>
 
-          <div className="chev" style={{ position: 'absolute', zIndex: 1, bottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+          <div className="chev" style={{ position: 'absolute', zIndex: 9, bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
             <span style={{ color: GOLD_DEEP, fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.3em' }}>Scroll</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={GOLD_DEEP} strokeWidth="1.5"><path d="M6 9l6 6 6-6" /></svg>
           </div>
