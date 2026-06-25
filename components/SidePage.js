@@ -17,6 +17,22 @@ const SUB = '#d8c79a'
 const QURAN_AR =
   'وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ'
 
+/* continuously rising lanterns: {left%, width px, duration s, delay s, opacity, rest%} */
+const RISERS = [
+  { l: 7, w: 34, dur: 23, delay: 2, op: 0.7, rest: 30 },
+  { l: 16, w: 22, dur: 30, delay: 11, op: 0.45, rest: 62 },
+  { l: 27, w: 42, dur: 20, delay: 6, op: 0.8, rest: 18 },
+  { l: 38, w: 20, dur: 28, delay: 16, op: 0.45, rest: 50 },
+  { l: 47, w: 30, dur: 25, delay: 9, op: 0.65, rest: 72 },
+  { l: 57, w: 46, dur: 19, delay: 13, op: 0.85, rest: 40 },
+  { l: 66, w: 22, dur: 29, delay: 4, op: 0.5, rest: 24 },
+  { l: 74, w: 36, dur: 22, delay: 18, op: 0.72, rest: 56 },
+  { l: 84, w: 24, dur: 27, delay: 8, op: 0.5, rest: 14 },
+  { l: 92, w: 32, dur: 21, delay: 14, op: 0.68, rest: 68 },
+  { l: 33, w: 16, dur: 34, delay: 21, op: 0.38, rest: 80 },
+  { l: 62, w: 16, dur: 33, delay: 1, op: 0.38, rest: 8 },
+]
+
 /* parallax layer (backdrop or hero decoration) */
 function BLayer({ src, f, pos, cover, float, opacity = 1, objPos = 'center bottom', z, filter, mask }) {
   return (
@@ -82,9 +98,7 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
     const desk = window.matchMedia('(min-width: 1024px)').matches
     const srcs = [
       desk ? 'sky-wide.webp' : 'sky.webp',
-      'palace.webp', 'lanterns-sky.webp', `florals-${side}.webp`,
-      desk ? 'arch-wide.webp' : 'arch.webp',
-      ...(desk ? ['florals-wide.webp'] : ['palace-far.webp']),
+      'palace.webp', 'lantern-rise.webp', 'lantern-hang.webp', `florals-${side}.webp`,
     ]
     let left = srcs.length, done = false
     const finish = () => { if (!done) { done = true; setLoaded(true) } }
@@ -178,27 +192,26 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
 
   return (
     <main className={`scene-root${ready ? ' ready' : ''}`} style={{ position: 'relative', minHeight: '100dvh', backgroundColor: '#0e0a06', color: INK, overflowX: 'hidden' }}>
-      {/* ── backdrop (widescreen on desktop, portrait on phones) ── */}
+      {/* ── ambient lantern-night backdrop (fixed) ── */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden' }}>
-        {desktop ? (
-          <>
-            <BLayer src={`${SCENE}/sky-wide.webp`} f={0} cover objPos="center" pos={{ inset: 0 }} />
-            <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.8} pos={{ left: '50%', bottom: '20%', width: '34%', transform: 'translateX(-50%)' }} />
-            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.5} pos={{ left: '22%', top: '8%', width: '30%', transform: 'translateX(-50%)' }} />
-            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.5} pos={{ left: '50%', top: '3%', width: '46%', transform: 'translateX(-50%)' }} />
-            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.45} pos={{ left: '78%', top: '6%', width: '28%', transform: 'translateX(-50%)' }} />
-          </>
-        ) : (
-          <>
-            <BLayer src={`${SCENE}/sky.webp`} f={0} cover objPos="center top" pos={{ inset: 0 }} />
-            <BLayer src={`${SCENE}/palace-far.webp`} f={0} opacity={0.5} pos={{ left: '50%', bottom: '30%', width: '150%', transform: 'translateX(-50%)' }} />
-            <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.8} pos={{ left: '50%', bottom: '26%', width: '74%', transform: 'translateX(-50%)' }} />
-            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.5} pos={{ left: '50%', top: '0%', width: '100%', transform: 'translateX(-50%)' }} />
-          </>
-        )}
-        {/* legibility scrim */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(14,10,6,0.45) 0%, rgba(14,10,6,0.84) 52%, rgba(14,10,6,0.96) 100%)' }} />
-        <div style={{ position: 'absolute', inset: 0, background: tint, mixBlendMode: 'overlay' }} />
+        {/* deep night sky */}
+        <img src={`${SCENE}/${desktop ? 'sky-wide' : 'sky'}.webp`} alt="" aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+        {/* faint palace low on the horizon */}
+        <img src={`${SCENE}/palace.webp`} alt="" aria-hidden="true" style={{ position: 'absolute', left: '50%', bottom: '4%', width: desktop ? '46%' : '92%', transform: 'translateX(-50%)', opacity: 0.32, filter: 'blur(2px) saturate(0.9)', maskImage: 'linear-gradient(180deg, transparent 0%, #000 30%, #000 80%, transparent 100%)', WebkitMaskImage: 'linear-gradient(180deg, transparent 0%, #000 30%, #000 80%, transparent 100%)' }} />
+        {/* deep-night scrim */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(10,7,4,0.55) 0%, rgba(10,7,4,0.7) 45%, rgba(12,8,4,0.82) 100%)' }} />
+        {/* continuously rising lanterns */}
+        {RISERS.map((r, i) => (
+          <img key={i} src={`${SCENE}/lantern-rise.webp`} alt="" aria-hidden="true" className="lantern-rise"
+            style={{ left: `${r.l}%`, width: r.w, ['--dur']: `${r.dur}s`, ['--op']: r.op, ['--rest']: `${r.rest}%`, animationDelay: `-${r.delay}s` }} />
+        ))}
+        {/* per-side tint */}
+        <div style={{ position: 'absolute', inset: 0, background: tint, mixBlendMode: 'overlay', pointerEvents: 'none' }} />
+      </div>
+
+      {/* ── per-side florals at the bottom corners (static) ── */}
+      <div aria-hidden="true" style={{ position: 'fixed', inset: 0, zIndex: 5, pointerEvents: 'none' }}>
+        <img src={`${SCENE}/florals-${side}.webp`} alt="" style={{ position: 'absolute', bottom: 0, left: '50%', width: '100%', transform: 'translateX(-50%)', display: 'block', opacity: 0.8 }} />
       </div>
 
       {/* ── nav ── */}
@@ -210,39 +223,26 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
       {/* ── content ── */}
       <div style={{ position: 'relative', zIndex: 1 }}>
 
-        {/* hero — arch-framed scene echoing the landing */}
-        <section style={{ position: 'relative', height: '100dvh', overflow: 'hidden' }}>
-          {desktop ? (
-            <>
-              <BLayer src={`${SCENE}/sky-wide.webp`} f={0} cover objPos="center" pos={{ inset: 0 }} />
-              <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.95} filter="blur(0.6px) saturate(0.97)" mask="linear-gradient(180deg, #000 0%, #000 84%, transparent 100%)" pos={{ left: '50%', bottom: '7%', width: 'min(78%, 122dvh)', transform: 'translateX(-50%)' }} />
-              <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.6} pos={{ left: '24%', top: '8%', width: '30%', transform: 'translateX(-50%)' }} />
-              <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.6} pos={{ left: '50%', top: '3%', width: '40%', transform: 'translateX(-50%)' }} />
-              <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.55} pos={{ left: '76%', top: '7%', width: '28%', transform: 'translateX(-50%)' }} />
-              <BLayer src={`${SCENE}/arch-wide.webp`} f={0} cover pos={{ inset: 0 }} />
-              <BLayer src={`${SCENE}/florals-wide.webp`} f={0} pos={{ left: '50%', bottom: 0, width: '100%', transform: 'translateX(-50%)' }} />
-            </>
-          ) : (
-            <>
-              <BLayer src={`${SCENE}/sky.webp`} f={0} cover objPos="center top" pos={{ inset: 0 }} />
-              <BLayer src={`${SCENE}/palace-far.webp`} f={0} opacity={0.6} pos={{ left: '50%', bottom: '12%', width: '132%', transform: 'translateX(-50%)' }} />
-              <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.95} pos={{ left: '50%', bottom: '8%', width: '78%', transform: 'translateX(-50%)' }} />
-              <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.6} pos={{ left: '50%', top: '-3%', width: '100%', transform: 'translateX(-50%)' }} />
-              <BLayer src={`${SCENE}/arch.webp`} f={0} cover pos={{ inset: 0 }} />
-              <BLayer src={`${SCENE}/florals-${side}.webp`} f={0} pos={{ left: '50%', bottom: '-3%', width: '108%', transform: 'translateX(-50%)' }} />
-            </>
-          )}
+        {/* hero — elegant lantern-night */}
+        <section style={{ position: 'relative', minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '120px 18px 40px' }}>
+          {/* ornate hanging lantern focal */}
+          <img src={`${SCENE}/lantern-hang.webp`} alt="" aria-hidden="true" className="lantern-drift"
+            style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: desktop ? '78px' : '64px', opacity: 0.95, animationDuration: '6s' }} />
 
-          {/* names */}
-          <div style={{ position: 'absolute', zIndex: 9, top: 'clamp(80px, 12%, 150px)', left: '50%', transform: 'translateX(-50%)', width: '92%', maxWidth: '660px', textAlign: 'center' }}>
-            <p style={labelCaps({ marginBottom: '8px', color: GOLD })}>{t.side_label}</p>
-            <h1 style={{ fontFamily: 'var(--font-script)', color: INK, fontWeight: 400, lineHeight: 1.05, margin: '0 0 8px', whiteSpace: 'nowrap', fontSize: desktop ? 'clamp(3rem, 6vw, 5rem)' : 'clamp(2rem, 11vw, 3rem)', textShadow: '0 2px 22px rgba(0,0,0,0.75)' }}>
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <p style={labelCaps({ marginBottom: '14px', color: GOLD })}>{t.side_label}</p>
+            <h1 style={{ fontFamily: 'var(--font-script)', color: INK, fontWeight: 400, lineHeight: 1.05, margin: '0 0 10px', whiteSpace: 'nowrap', fontSize: desktop ? 'clamp(3.2rem, 6vw, 5.2rem)' : 'clamp(2.1rem, 11vw, 3.2rem)', textShadow: '0 2px 24px rgba(0,0,0,0.7)' }}>
               Fahad <span style={{ fontSize: '0.62em', color: GOLD, verticalAlign: 'middle' }}>&amp;</span> Nadha
             </h1>
-            <p style={{ color: SUB, fontSize: isMl ? '0.95rem' : '0.82rem', letterSpacing: isMl ? '0.04em' : '0.24em', fontFamily: bodyFont, textShadow: '0 1px 10px rgba(0,0,0,0.8)' }}>{t.date_val}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', justifyContent: 'center', margin: '6px 0 12px' }}>
+              <div style={{ width: '48px', height: '1px', background: `linear-gradient(90deg, transparent, ${GOLD_DEEP}, transparent)` }} />
+              <span style={{ color: GOLD, fontSize: '1rem' }}>✦</span>
+              <div style={{ width: '48px', height: '1px', background: `linear-gradient(90deg, transparent, ${GOLD_DEEP}, transparent)` }} />
+            </div>
+            <p style={{ color: SUB, fontSize: isMl ? '0.95rem' : '0.85rem', letterSpacing: isMl ? '0.04em' : '0.24em', fontFamily: bodyFont, textShadow: '0 1px 10px rgba(0,0,0,0.8)' }}>{t.event_name} · {t.date_val}</p>
           </div>
 
-          <div className="chev" style={{ position: 'absolute', zIndex: 9, bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+          <div className="chev" style={{ position: 'absolute', zIndex: 1, bottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
             <span style={{ color: GOLD_DEEP, fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.3em' }}>Scroll</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={GOLD_DEEP} strokeWidth="1.5"><path d="M6 9l6 6 6-6" /></svg>
           </div>
