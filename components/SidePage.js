@@ -102,10 +102,9 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
         <div style={{ position: 'absolute', inset: 0, background: tint, mixBlendMode: 'overlay' }} />
       </div>
 
-      {/* ── fixed decorative frame (static, no parallax) ── */}
+      {/* ── subtle florals at the bottom corners (static) ── */}
       <div aria-hidden="true" style={{ position: 'fixed', inset: 0, zIndex: 40, pointerEvents: 'none' }}>
-        <img src={`${SCENE}/garland-top.webp`} alt="" style={{ position: 'absolute', top: 0, left: '50%', width: '102%', transform: 'translateX(-50%)', display: 'block' }} />
-        <img src={`${SCENE}/florals-${side}.webp`} alt="" style={{ position: 'absolute', bottom: 0, left: '50%', width: '102%', transform: 'translateX(-50%)', display: 'block', opacity: 0.92 }} />
+        <img src={`${SCENE}/florals-${side}.webp`} alt="" style={{ position: 'absolute', bottom: 0, left: '50%', width: '100%', transform: 'translateX(-50%)', display: 'block', opacity: 0.85 }} />
       </div>
 
       {/* ── nav ── */}
@@ -118,7 +117,7 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
       <div style={{ position: 'relative', zIndex: 1 }}>
 
         {/* hero */}
-        <section style={{ position: 'relative', minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '120px 18px 40px' }}>
+        <section style={{ position: 'relative', minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '96px 18px 40px' }}>
           <div style={{ position: 'relative', zIndex: 1 }}>
             <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: GOLD, fontSize: 'clamp(1.5rem, 7vw, 2.6rem)', lineHeight: 1.3, marginBottom: '22px', maxWidth: '100%' }}>﷽</div>
             <p style={labelCaps({ marginBottom: '18px' })}>{t.side_label}</p>
