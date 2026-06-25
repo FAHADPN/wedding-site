@@ -106,14 +106,16 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
           <>
             <BLayer src={`${SCENE}/sky-wide.webp`} f={0} cover objPos="center" pos={{ inset: 0 }} />
             <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.8} pos={{ left: '50%', bottom: '20%', width: '34%', transform: 'translateX(-50%)' }} />
-            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.4} pos={{ left: '50%', top: '3%', width: '52%', transform: 'translateX(-50%)' }} />
+            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.5} pos={{ left: '22%', top: '8%', width: '30%', transform: 'translateX(-50%)' }} />
+            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.5} pos={{ left: '50%', top: '3%', width: '46%', transform: 'translateX(-50%)' }} />
+            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.45} pos={{ left: '78%', top: '6%', width: '28%', transform: 'translateX(-50%)' }} />
           </>
         ) : (
           <>
             <BLayer src={`${SCENE}/sky.webp`} f={0} cover objPos="center top" pos={{ inset: 0 }} />
             <BLayer src={`${SCENE}/palace-far.webp`} f={0} opacity={0.5} pos={{ left: '50%', bottom: '30%', width: '150%', transform: 'translateX(-50%)' }} />
             <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.8} pos={{ left: '50%', bottom: '26%', width: '74%', transform: 'translateX(-50%)' }} />
-            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} opacity={0.45} pos={{ left: '50%', top: '0%', width: '100%', transform: 'translateX(-50%)' }} />
+            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.5} pos={{ left: '50%', top: '0%', width: '100%', transform: 'translateX(-50%)' }} />
           </>
         )}
         {/* legibility scrim */}
