@@ -1,101 +1,114 @@
-/* Prototype of the "cream invitation card" direction — visit /preview.
-   Not linked from the live site. Hero + verse section only, for judging the look. */
+'use client'
 
-const GREEN = '#33483a'
-const GREEN_SOFT = '#5d6b55'
-const GOLD = '#b08a45'
-const GOLD_SOFT = '#c9a84c'
-const INK = '#4a4638'
+/* Prototype — "inside the living palace": the landing's vivid scene stays alive behind,
+   content floats on frosted-glass panels. Visit /preview. Not linked from the live site. */
 
-/* gold cusped-arch line over the Bismillah */
-function ArchLine() {
+import { useEffect, useState } from 'react'
+
+const SCENE = '/scene'
+const GOLD = '#E8D5A3'
+const GOLD_DEEP = '#C9A84C'
+const INK = '#F3E9D2'
+const SUB = '#d8c79a'
+
+function GlassCard({ children }) {
   return (
-    <svg viewBox="0 0 300 90" fill="none" style={{ width: 'min(300px, 80%)', height: 'auto', margin: '0 auto', display: 'block' }} aria-hidden="true">
-      <path d="M10 88 L10 46 Q10 30 26 30 Q26 16 40 30 Q56 6 80 26 Q110 -6 150 14 Q190 -6 220 26 Q244 6 260 30 Q274 16 274 30 Q290 30 290 46 L290 88"
-        stroke={GOLD_SOFT} strokeWidth="1" opacity="0.7" />
-      <circle cx="150" cy="10" r="2.4" fill={GOLD} />
-    </svg>
-  )
-}
-
-/* small shimmering ornament divider */
-function Divider({ w = 60 }) {
-  return <div style={{ width: w, height: '1px', background: `linear-gradient(90deg, transparent, ${GOLD}, transparent)` }} />
-}
-
-function CorneredCard({ children }) {
-  return (
-    <div style={{ position: 'relative', background: 'rgba(255,255,255,0.5)', border: `1px solid rgba(176,138,69,0.32)`, padding: '34px 28px' }}>
+    <div style={{
+      position: 'relative', background: 'rgba(12,8,4,0.46)', border: '1px solid rgba(201,168,76,0.42)',
+      backdropFilter: 'blur(7px)', WebkitBackdropFilter: 'blur(7px)', padding: '34px 28px',
+      boxShadow: '0 12px 44px rgba(0,0,0,0.45)',
+    }}>
       {[
-        { top: '8px', left: '8px', borderTop: `1px solid ${GOLD}`, borderLeft: `1px solid ${GOLD}` },
-        { top: '8px', right: '8px', borderTop: `1px solid ${GOLD}`, borderRight: `1px solid ${GOLD}` },
-        { bottom: '8px', left: '8px', borderBottom: `1px solid ${GOLD}`, borderLeft: `1px solid ${GOLD}` },
-        { bottom: '8px', right: '8px', borderBottom: `1px solid ${GOLD}`, borderRight: `1px solid ${GOLD}` },
-      ].map((s, i) => <div key={i} style={{ position: 'absolute', width: '14px', height: '14px', opacity: 0.6, ...s }} />)}
+        { top: '8px', left: '8px', borderTop: `1px solid ${GOLD_DEEP}`, borderLeft: `1px solid ${GOLD_DEEP}` },
+        { top: '8px', right: '8px', borderTop: `1px solid ${GOLD_DEEP}`, borderRight: `1px solid ${GOLD_DEEP}` },
+        { bottom: '8px', left: '8px', borderBottom: `1px solid ${GOLD_DEEP}`, borderLeft: `1px solid ${GOLD_DEEP}` },
+        { bottom: '8px', right: '8px', borderBottom: `1px solid ${GOLD_DEEP}`, borderRight: `1px solid ${GOLD_DEEP}` },
+      ].map((s, i) => <div key={i} style={{ position: 'absolute', width: '14px', height: '14px', ...s }} />)}
       {children}
     </div>
   )
 }
 
-export default function PreviewCard() {
+export default function Preview() {
+  const [desktop, setDesktop] = useState(false)
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const apply = () => setDesktop(mq.matches); apply()
+    mq.addEventListener('change', apply); return () => mq.removeEventListener('change', apply)
+  }, [])
+
+  const labelCaps = { color: GOLD_DEEP, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.26em' }
+
   return (
-    <main className="islamic-bg" style={{ minHeight: '100dvh', color: GREEN }}>
-      {/* ── hero ── */}
-      <section style={{ maxWidth: '640px', margin: '0 auto', padding: '64px 24px 36px', textAlign: 'center' }}>
-        <ArchLine />
-        <div className="arabic" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: GOLD, fontSize: 'clamp(1.5rem, 7vw, 2.6rem)', lineHeight: 1.3, marginTop: '-6px', marginBottom: '8px', maxWidth: '100%' }}>﷽</div>
-        <p style={{ fontFamily: 'var(--font-cormorant)', fontStyle: 'italic', color: GREEN_SOFT, fontSize: '0.86rem', marginBottom: '34px' }}>
-          In the Name of Allah, the Most Gracious, the Most Merciful
-        </p>
+    <main style={{ position: 'relative', minHeight: '100dvh', backgroundColor: '#0e0a06', color: INK, overflowX: 'hidden' }}>
+      {/* ── living scene (fixed, VIVID — only a light scrim) ── */}
+      <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden' }}>
+        {desktop ? (
+          <>
+            <img src={`${SCENE}/sky-wide.webp`} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={`${SCENE}/palace.webp`} alt="" style={{ position: 'absolute', left: '50%', bottom: '6%', width: 'min(76%, 120dvh)', transform: 'translateX(-50%)', filter: 'blur(0.6px) saturate(0.97)', maskImage: 'linear-gradient(180deg,#000 0%,#000 84%,transparent 100%)', WebkitMaskImage: 'linear-gradient(180deg,#000 0%,#000 84%,transparent 100%)' }} />
+            <img src={`${SCENE}/lanterns-sky.webp`} alt="" className="lantern-drift" style={{ position: 'absolute', left: '24%', top: '6%', width: '30%', transform: 'translateX(-50%)', animationDuration: '7s', opacity: 0.75 }} />
+            <img src={`${SCENE}/lanterns-sky.webp`} alt="" className="lantern-drift" style={{ position: 'absolute', left: '50%', top: '2%', width: '40%', transform: 'translateX(-50%)', animationDuration: '6s', opacity: 0.8 }} />
+            <img src={`${SCENE}/lanterns-sky.webp`} alt="" className="lantern-drift" style={{ position: 'absolute', left: '76%', top: '7%', width: '28%', transform: 'translateX(-50%)', animationDuration: '8s', opacity: 0.7 }} />
+            <img src={`${SCENE}/arch-wide.webp`} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={`${SCENE}/florals-wide.webp`} alt="" style={{ position: 'absolute', left: '50%', bottom: 0, width: '100%', transform: 'translateX(-50%)' }} />
+          </>
+        ) : (
+          <>
+            <img src={`${SCENE}/sky.webp`} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+            <img src={`${SCENE}/palace.webp`} alt="" style={{ position: 'absolute', left: '50%', bottom: '34%', width: '86%', transform: 'translateX(-50%)' }} />
+            <img src={`${SCENE}/lanterns-sky.webp`} alt="" className="lantern-drift" style={{ position: 'absolute', left: '50%', top: '4%', width: '100%', transform: 'translateX(-50%)', animationDuration: '7s', opacity: 0.8 }} />
+            <img src={`${SCENE}/arch.webp`} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={`${SCENE}/florals-bride.webp`} alt="" style={{ position: 'absolute', left: '50%', bottom: 0, width: '108%', transform: 'translateX(-50%)' }} />
+          </>
+        )}
+        {/* LIGHT scrim so the scene stays vivid */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(10,7,4,0.18) 0%, rgba(10,7,4,0.32) 55%, rgba(10,7,4,0.5) 100%)' }} />
+      </div>
 
-        <p style={{ color: GREEN_SOFT, fontSize: '0.66rem', textTransform: 'uppercase', letterSpacing: '0.32em', marginBottom: '2px' }}>Together with their families</p>
-        <p style={{ fontFamily: 'var(--font-script)', color: GOLD, fontSize: '1.5rem', marginBottom: '4px' }}>we joyfully invite you</p>
+      {/* ── content over the living scene ── */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* hero */}
+        <section style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', textAlign: 'center', padding: 'clamp(80px, 12vh, 150px) 18px 40px' }}>
+          <p style={{ ...labelCaps, color: GOLD, marginBottom: '10px', textShadow: '0 1px 10px rgba(0,0,0,0.8)' }}>Bride&apos;s Side · نكاح</p>
+          <h1 style={{ fontFamily: 'var(--font-script)', color: INK, fontWeight: 400, lineHeight: 1.05, margin: '0 0 8px', whiteSpace: 'nowrap', fontSize: desktop ? 'clamp(3rem, 6vw, 5rem)' : 'clamp(2rem, 11vw, 3rem)', textShadow: '0 2px 22px rgba(0,0,0,0.8)' }}>
+            Fahad <span style={{ fontSize: '0.62em', color: GOLD }}>&amp;</span> Nadha
+          </h1>
+          <p style={{ color: SUB, fontSize: '0.82rem', letterSpacing: '0.24em', textShadow: '0 1px 10px rgba(0,0,0,0.85)' }}>NIKKAH · 26 JULY 2026</p>
+        </section>
 
-        <h1 style={{ fontFamily: 'var(--font-script)', color: GREEN, fontSize: 'clamp(3rem, 13vw, 5rem)', fontWeight: 400, lineHeight: 1.02, margin: '10px 0 6px' }}>
-          Fahad <span style={{ fontSize: '0.6em', color: GOLD, verticalAlign: 'middle' }}>&amp;</span> Nadha
-        </h1>
+        {/* glass content panels */}
+        <section style={{ maxWidth: '600px', margin: '0 auto', padding: '4vh 20px' }}>
+          <GlassCard>
+            <div className="arabic" style={{ color: INK, fontSize: '1.18rem', textAlign: 'center', marginBottom: '16px', lineHeight: 2 }}>
+              وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً
+            </div>
+            <div style={{ width: '60px', height: '1px', background: `linear-gradient(90deg,transparent,${GOLD_DEEP},transparent)`, margin: '0 auto 16px' }} />
+            <p style={{ fontFamily: 'var(--font-cormorant)', fontStyle: 'italic', color: SUB, fontSize: '0.98rem', lineHeight: 1.85, textAlign: 'center', marginBottom: '12px' }}>
+              “And of His signs is that He created for you mates from among yourselves, that you may find tranquillity in them; and He placed between you affection and mercy.”
+            </p>
+            <p style={{ color: GOLD, fontSize: '0.62rem', textTransform: 'uppercase', letterSpacing: '0.22em', textAlign: 'center' }}>— Surah Ar-Rum · 30:21</p>
+          </GlassCard>
+        </section>
 
-        <p style={{ color: GOLD, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.3em', margin: '14px 0 6px' }}>Bride&apos;s Side · Nikkah Ceremony</p>
-
-        <p style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: '1.02rem', lineHeight: 1.7, maxWidth: '380px', margin: '14px auto 26px' }}>
-          to share in the blessing of our union, in shā Allah.
-        </p>
-
-        {/* date block */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '18px', marginBottom: '6px' }}>
-          <Divider w={44} />
-          <p style={{ fontFamily: 'var(--font-cormorant)', color: GREEN, fontSize: '0.72rem', letterSpacing: '0.18em' }}>26<sup>TH</sup></p>
-          <Divider w={44} />
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '4px' }}>
-          {['SUNDAY', 'JULY', '2026'].map((x, i) => (
-            <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '16px' }}>
-              {i > 0 && <span style={{ color: GOLD }}>·</span>}
-              <span style={{ fontFamily: 'var(--font-cormorant)', color: GREEN, fontSize: '1.05rem', letterSpacing: '0.16em' }}>{x}</span>
-            </span>
-          ))}
-        </div>
-        <p style={{ color: GREEN_SOFT, fontSize: '0.7rem', letterSpacing: '0.1em', marginTop: '8px' }}>( 11 Safar, 1448 AH ) · 11:30 AM</p>
-      </section>
-
-      {/* ── verse section ── */}
-      <section style={{ maxWidth: '640px', margin: '0 auto', padding: '6px 24px 64px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginBottom: '28px' }}>
-          <Divider w={70} />
-          <span className="arabic" style={{ color: GOLD, fontSize: '1.2rem', opacity: 0.8 }}>۞</span>
-          <Divider w={70} />
-        </div>
-        <CorneredCard>
-          <div className="arabic" style={{ color: GREEN, fontSize: '1.2rem', textAlign: 'center', marginBottom: '18px', lineHeight: 2 }}>
-            وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً
-          </div>
-          <div style={{ margin: '0 auto 18px', width: '60px' }}><Divider w={60} /></div>
-          <p style={{ fontFamily: 'var(--font-cormorant)', fontStyle: 'italic', color: INK, fontSize: '0.98rem', lineHeight: 1.85, textAlign: 'center', marginBottom: '14px' }}>
-            “And of His signs is that He created for you mates from among yourselves, that you may find tranquillity in them; and He placed between you affection and mercy.”
-          </p>
-          <p style={{ color: GOLD, fontSize: '0.64rem', textTransform: 'uppercase', letterSpacing: '0.22em', textAlign: 'center' }}>— Surah Ar-Rum · 30:21</p>
-        </CorneredCard>
-      </section>
+        <section style={{ maxWidth: '600px', margin: '0 auto', padding: '4vh 20px 10vh' }}>
+          <GlassCard>
+            <p style={{ ...labelCaps, color: GOLD, textAlign: 'center', marginBottom: '22px' }}>Bride&apos;s Side · نكاح</p>
+            {[['Date', '26th July 2026'], ['Time', '11:30 AM'], ['Venue', 'Cosmopolitan Convention Center']].map(([l, v], i) => (
+              <div key={i}>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                  <span style={{ color: GOLD, fontSize: '1.1rem', marginTop: '2px' }}>◈</span>
+                  <div>
+                    <p style={{ ...labelCaps, fontSize: '0.6rem', letterSpacing: '0.2em', marginBottom: '4px' }}>{l}</p>
+                    <p style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: '1.25rem', fontWeight: 300 }}>{v}</p>
+                  </div>
+                </div>
+                {i < 2 && <div style={{ height: '1px', background: 'rgba(201,168,76,0.25)', margin: '18px 0' }} />}
+              </div>
+            ))}
+          </GlassCard>
+        </section>
+      </div>
     </main>
   )
 }
