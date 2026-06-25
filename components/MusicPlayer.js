@@ -12,7 +12,7 @@ export default function MusicPlayer() {
   useEffect(() => {
     const a = ref.current
     if (!a) return
-    a.volume = 0.16
+    a.volume = 0.4
     const savedMuted = (() => { try { return localStorage.getItem('music-muted') === '1' } catch { return false } })()
     setMuted(savedMuted)
     a.muted = savedMuted
