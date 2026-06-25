@@ -1,5 +1,6 @@
-import { Amiri, Cormorant_Garamond, Noto_Sans_Malayalam, Lavishly_Yours } from 'next/font/google'
+import { Amiri, Cormorant_Garamond, Noto_Sans_Malayalam, Lavishly_Yours, Great_Vibes } from 'next/font/google'
 import './globals.css'
+import MusicPlayer from '../components/MusicPlayer'
 
 const amiri = Amiri({
   subsets: ['arabic', 'latin'],
@@ -20,6 +21,13 @@ const lavishlyYours = Lavishly_Yours({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--font-lavishly',
+  display: 'swap',
+})
+
+const greatVibes = Great_Vibes({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-script',
   display: 'swap',
 })
 
@@ -59,8 +67,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${amiri.variable} ${cormorant.variable} ${notoMalayalam.variable} ${lavishlyYours.variable}`}>
+      <body className={`${amiri.variable} ${cormorant.variable} ${notoMalayalam.variable} ${lavishlyYours.variable} ${greatVibes.variable}`}>
         {children}
+        <MusicPlayer />
       </body>
     </html>
   )

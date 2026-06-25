@@ -32,3 +32,9 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Source art (heavy PNGs; optimized webp live in public/scene)
+pngs generated/
+
+# source audio
+/Tum Ho Toh Full Song.mp3

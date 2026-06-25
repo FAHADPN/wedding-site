@@ -20,6 +20,12 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   background-color: var(--ivory);
   color: var(--text-dark);
@@ -143,6 +149,163 @@ body {
   color: #fff;
 }
 
+/* ─── Lantern glow ───────────────────────────────────────── */
+@keyframes lanternGlow {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.94); }
+  50%      { opacity: 0.95; transform: translate(-50%, -50%) scale(1.10); }
+}
+.lantern-glow {
+  transform: translate(-50%, -50%);
+  animation: lanternGlow 4.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lantern-glow {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* ─── Sky-lantern float (depth field) ────────────────────── */
+@keyframes lanternDriftY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-18px); }
+}
+.lantern-drift {
+  animation-name: lanternDriftY;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lantern-drift { animation: none; }
+}
+
+/* ─── Parallax scene frame ───────────────────────────────── */
+.scene-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  aspect-ratio: 1024 / 1536;
+  width: min(100vw, calc(100dvh * 0.6667));
+  height: auto;
+  overflow: hidden;
+}
+/* portrait phones: cover the viewport height (crop the frame edges) */
+@media (max-aspect-ratio: 2 / 3) {
+  .scene-frame {
+    width: auto;
+    height: 100dvh;
+  }
+}
+
+/* ─── Scene entrance (preload-gated, staggered) ──────────── */
+.layer-fade {
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.scene-root.ready .layer-fade {
+  opacity: 1;
+}
+.scene-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: #0e0a06;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+.scene-root.ready .scene-curtain {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .layer-fade, .scene-curtain { transition: none; }
+}
+
+/* ─── Loading spinner ────────────────────────────────────── */
+@keyframes spin360 { to { transform: rotate(360deg); } }
+.gold-spinner {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 168, 76, 0.18);
+  border-top-color: #e8d5a3;
+  animation: spin360 0.9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gold-spinner { animation-duration: 1.8s; }
+}
+
+/* ─── Scene entry cue ────────────────────────────────────── */
+.scene-cue {
+  opacity: 0;
+  transition: opacity 1s ease;
+  transition-delay: 1.3s;
+}
+.scene-root.ready .scene-cue { opacity: 1; }
+.scene-root.choosing .scene-cue { opacity: 0; transition-delay: 0s; pointer-events: none; }
+@keyframes cuePulse {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50%      { transform: translateY(-5px); opacity: 1; }
+}
+.scene-cue .cue-chev { animation: cuePulse 1.9s ease-in-out infinite; }
+
+/* ─── Choose-your-side overlay ───────────────────────────── */
+.choose-overlay {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.7s ease, visibility 0.7s;
+}
+.choose-overlay.open { opacity: 1; visibility: visible; }
+.choose-card {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+.choose-overlay.open .choose-card { opacity: 1; transform: none; }
+.choose-card:hover { transform: translateY(-6px); box-shadow: 0 16px 50px rgba(201,168,76,0.25); }
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-cue, .choose-overlay, .choose-card { transition: none; }
+  .scene-cue .cue-chev { animation: none; }
+}
+
+/* ─── Parallax scene layers ──────────────────────────────── */
+.scene-layer {
+  transform: translate3d(
+    calc(var(--mx, 0) * var(--f, 0) * 1px),
+    calc(var(--my, 0) * var(--f, 0) * 0.55px),
+    0
+  );
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-layer { transform: none; }
+}
+
+/* ─── Scroll reveal ──────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.16, 0.84, 0.44, 1);
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ─── Scroll hint chevron ────────────────────────────────── */
+@keyframes chevBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.45; }
+  50%      { transform: translateY(7px); opacity: 1; }
+}
+.chev { animation: chevBounce 1.8s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .chev { animation: none; }
+}
+
 /* ─── RSVP form inputs ───────────────────────────────────── */
 .rsvp-input {
   width: 100%;
@@ -162,6 +325,18 @@ body {
 }
 .rsvp-input::placeholder {
   color: rgba(155, 123, 58, 0.45);
+}
+.rsvp-input.dark {
+  background: rgba(20, 14, 8, 0.5);
+  border-color: rgba(201, 168, 76, 0.4);
+  color: #f3e9d2;
+}
+.rsvp-input.dark::placeholder {
+  color: rgba(201, 168, 76, 0.5);
+}
+.rsvp-input.dark:focus {
+  border-color: #e8d5a3;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.18);
 }
 
 /* ─── Scrollbar ──────────────────────────────────────────── */
