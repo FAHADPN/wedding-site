@@ -167,8 +167,8 @@ export default function PalaceScene() {
       {/* ── couple's names (stylised) ── */}
       <div className="layer-fade" style={{ position: 'absolute', zIndex: 8, left: '50%', top: desktop ? '8%' : '14.5%', transform: 'translateX(-50%)', width: '92%', maxWidth: '660px', textAlign: 'center', pointerEvents: 'none' }}>
         <div aria-hidden="true" style={{ position: 'absolute', inset: '-45% -18%', zIndex: -1, background: 'radial-gradient(ellipse at center, rgba(8,5,2,0.6) 0%, rgba(8,5,2,0.28) 46%, transparent 72%)' }} />
-        <p style={{ color: '#E8D5A3', fontSize: desktop ? '0.8rem' : '0.66rem', textTransform: 'uppercase', letterSpacing: '0.34em', marginBottom: '4px', textShadow: '0 1px 10px rgba(0,0,0,0.85)' }}>The Wedding of</p>
-        <h1 style={{ fontFamily: 'var(--font-script)', color: '#F8F1DF', fontWeight: 400, lineHeight: 1.04, margin: 0, fontSize: desktop ? 'clamp(3.2rem, 6vw, 5.5rem)' : 'clamp(2.8rem, 14vw, 3.8rem)', textShadow: '0 2px 22px rgba(0,0,0,0.9), 0 0 34px rgba(201,168,76,0.3)' }}>
+        <p style={{ color: '#E8D5A3', fontSize: desktop ? '0.8rem' : '0.6rem', textTransform: 'uppercase', letterSpacing: desktop ? '0.34em' : '0.26em', marginBottom: '4px', textShadow: '0 1px 10px rgba(0,0,0,0.85)' }}>The Wedding of</p>
+        <h1 style={{ fontFamily: 'var(--font-script)', color: '#F8F1DF', fontWeight: 400, lineHeight: 1.05, margin: 0, whiteSpace: 'nowrap', fontSize: desktop ? 'clamp(3.2rem, 6vw, 5.5rem)' : 'clamp(2rem, 10vw, 2.9rem)', textShadow: '0 2px 22px rgba(0,0,0,0.9), 0 0 34px rgba(201,168,76,0.3)' }}>
           Fahad <span style={{ fontSize: '0.62em', color: '#E8D5A3', verticalAlign: 'middle' }}>&amp;</span> Nadha
         </h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center', marginTop: '6px' }}>
