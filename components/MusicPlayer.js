@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react'
    if blocked, start on the first tap/click/keypress. A floating toggle mutes it. */
 export default function MusicPlayer() {
   const ref = useRef(null)
+  const mutedRef = useRef(false)
   const [muted, setMuted] = useState(false)
 
   useEffect(() => {
@@ -14,27 +15,32 @@ export default function MusicPlayer() {
     if (!a) return
     a.volume = 0.4
     const savedMuted = (() => { try { return localStorage.getItem('music-muted') === '1' } catch { return false } })()
+    mutedRef.current = savedMuted
     setMuted(savedMuted)
     a.muted = savedMuted
 
     const play = () => a.play().catch(() => {})
     play() // try immediately — succeeds where the browser permits autoplay
 
-    const onGesture = () => { play(); remove() }
+    const onGesture = () => { if (!mutedRef.current) play(); removeGestures() }
     const events = ['pointerdown', 'touchstart', 'keydown']
-    const onVisible = () => { if (document.visibilityState === 'visible') play() }
-    const remove = () => {
-      events.forEach((e) => window.removeEventListener(e, onGesture))
-      document.removeEventListener('visibilitychange', onVisible)
-    }
+    const removeGestures = () => events.forEach((e) => window.removeEventListener(e, onGesture))
     events.forEach((e) => window.addEventListener(e, onGesture, { passive: true }))
-    document.addEventListener('visibilitychange', onVisible)
-    return remove
+
+    // pause when the guest leaves the tab/app, resume on return (unless they muted)
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') a.pause()
+      else if (!mutedRef.current) play()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => { removeGestures(); document.removeEventListener('visibilitychange', onVisibility) }
   }, [])
 
   const toggle = () => {
     const a = ref.current
     const next = !muted
+    mutedRef.current = next
     setMuted(next)
     if (a) {
       a.muted = next
