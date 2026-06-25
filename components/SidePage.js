@@ -217,7 +217,6 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
         {/* hero */}
         <section style={{ position: 'relative', minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '96px 18px 40px' }}>
           <div style={{ position: 'relative', zIndex: 1 }}>
-            <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: GOLD, fontSize: 'clamp(1.5rem, 7vw, 2.6rem)', lineHeight: 1.3, marginBottom: '22px', maxWidth: '100%' }}>﷽</div>
             <p style={labelCaps({ marginBottom: '18px' })}>{t.side_label}</p>
             <h1 style={{ fontFamily: 'var(--font-cormorant)', color: INK, fontSize: 'clamp(2rem, 6.5vw, 3rem)', fontWeight: 300, lineHeight: 1.12, marginBottom: '12px', textShadow: '0 2px 24px rgba(0,0,0,0.6)' }}>{t.groom_name}</h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', justifyContent: 'center', marginBottom: '12px' }}>
