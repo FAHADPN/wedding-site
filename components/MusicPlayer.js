@@ -18,12 +18,17 @@ export default function MusicPlayer() {
     a.muted = savedMuted
 
     const play = () => a.play().catch(() => {})
-    play() // try immediately (works if the page already had interaction)
+    play() // try immediately — succeeds where the browser permits autoplay
 
     const onGesture = () => { play(); remove() }
     const events = ['pointerdown', 'touchstart', 'keydown']
-    const remove = () => events.forEach((e) => window.removeEventListener(e, onGesture))
+    const onVisible = () => { if (document.visibilityState === 'visible') play() }
+    const remove = () => {
+      events.forEach((e) => window.removeEventListener(e, onGesture))
+      document.removeEventListener('visibilitychange', onVisible)
+    }
     events.forEach((e) => window.addEventListener(e, onGesture, { passive: true }))
+    document.addEventListener('visibilitychange', onVisible)
     return remove
   }, [])
 
@@ -40,7 +45,7 @@ export default function MusicPlayer() {
 
   return (
     <>
-      <audio ref={ref} src="/music.mp3" loop preload="metadata" />
+      <audio ref={ref} src="/music.mp3" loop autoPlay preload="auto" />
       <button
         type="button"
         onClick={toggle}
