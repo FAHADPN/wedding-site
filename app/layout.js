@@ -1,5 +1,6 @@
 import { Amiri, Cormorant_Garamond, Noto_Sans_Malayalam, Lavishly_Yours, Great_Vibes } from 'next/font/google'
 import './globals.css'
+import MusicPlayer from '../components/MusicPlayer'
 
 const amiri = Amiri({
   subsets: ['arabic', 'latin'],
@@ -68,6 +69,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${amiri.variable} ${cormorant.variable} ${notoMalayalam.variable} ${lavishlyYours.variable} ${greatVibes.variable}`}>
         {children}
+        <MusicPlayer />
       </body>
     </html>
   )
