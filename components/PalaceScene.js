@@ -10,7 +10,7 @@ const SCENE = '/scene'
 
 const SHARED = ['palace.webp', 'couple.webp', 'lanterns-sky.webp']
 const MOBILE = ['sky.webp', 'palace-far.webp', 'arch.webp', 'florals.webp', 'lantern-hang.webp']
-const DESKTOP = ['sky-wide.webp', 'arch-wide.webp', 'florals-wide.webp', 'path.webp']
+const DESKTOP = ['sky-wide.webp', 'arch-wide.webp', 'florals-wide.webp']
 
 /* bilingual choose-overlay strings */
 const CHOOSE = {
@@ -143,7 +143,6 @@ export default function PalaceScene() {
           <Layer src={`${SCENE}/lanterns-sky.webp`} z={2} f={20} order={2} float pos={{ left: '23%', top: '9%', width: '34%', transform: 'translateX(-50%)' }} />
           <Layer src={`${SCENE}/lanterns-sky.webp`} z={2} f={16} order={2} float pos={{ left: '50%', top: '3%', width: '42%', transform: 'translateX(-50%)' }} />
           <Layer src={`${SCENE}/lanterns-sky.webp`} z={2} f={13} order={2} float pos={{ left: '78%', top: '7%', width: '32%', transform: 'translateX(-50%)' }} />
-          <Layer src={`${SCENE}/path.webp`} z={0} f={8} order={1} pos={{ left: '50%', bottom: '2%', width: '26%', transform: 'translateX(-50%)' }} />
           <Layer src={`${SCENE}/couple.webp`} z={3} f={24} order={3} pos={{ left: '50%', bottom: '8%', width: '20%', transform: 'translateX(-50%)' }} alt="The couple before the palace" />
           <Layer src={`${SCENE}/arch-wide.webp`} z={5} f={6} order={4} cover pos={{ inset: 0 }} />
           <Layer src={`${SCENE}/florals-wide.webp`} z={6} f={30} order={5} pos={{ left: '50%', bottom: '0', width: '100%', transform: 'translateX(-50%)' }} />
