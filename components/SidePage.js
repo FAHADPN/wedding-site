@@ -72,6 +72,7 @@ function Card({ children, style }) {
 export default function SidePage({ side, T, mapsUrl, targetDate }) {
   const [lang, setLang] = useState('en')
   const [ready, setReady] = useState(false)
+  const [desktop, setDesktop] = useState(false)
   const t = T[lang]
   const isMl = lang === 'ml'
   const bodyFont = isMl ? 'var(--font-noto-ml)' : 'var(--font-cormorant)'
@@ -84,6 +85,14 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
     return () => cancelAnimationFrame(r)
   }, [])
 
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const apply = () => setDesktop(mq.matches)
+    apply()
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [])
+
   const labelCaps = (extra = {}) => ({
     color: GOLD_DEEP, fontSize: '0.72rem', textTransform: isMl ? 'none' : 'uppercase',
     letterSpacing: isMl ? '0.04em' : '0.26em', fontFamily: isMl ? 'var(--font-noto-ml)' : undefined, ...extra,
@@ -91,14 +100,24 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
 
   return (
     <main className={`scene-root${ready ? ' ready' : ''}`} style={{ position: 'relative', minHeight: '100dvh', backgroundColor: '#0e0a06', color: INK, overflowX: 'hidden' }}>
-      {/* ── static backdrop ── */}
+      {/* ── backdrop (widescreen on desktop, portrait on phones) ── */}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0, overflow: 'hidden' }}>
-        <BLayer src={`${SCENE}/sky.webp`} f={0} cover objPos="center top" pos={{ inset: 0 }} />
-        <BLayer src={`${SCENE}/palace-far.webp`} f={0} opacity={0.5} pos={{ left: '50%', bottom: '30%', width: '150%', transform: 'translateX(-50%)' }} />
-        <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.8} pos={{ left: '50%', bottom: '26%', width: '74%', transform: 'translateX(-50%)' }} />
-        <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} opacity={0.45} pos={{ left: '50%', top: '0%', width: '100%', transform: 'translateX(-50%)' }} />
+        {desktop ? (
+          <>
+            <BLayer src={`${SCENE}/sky-wide.webp`} f={0} cover objPos="center" pos={{ inset: 0 }} />
+            <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.8} pos={{ left: '50%', bottom: '20%', width: '34%', transform: 'translateX(-50%)' }} />
+            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} float opacity={0.4} pos={{ left: '50%', top: '3%', width: '52%', transform: 'translateX(-50%)' }} />
+          </>
+        ) : (
+          <>
+            <BLayer src={`${SCENE}/sky.webp`} f={0} cover objPos="center top" pos={{ inset: 0 }} />
+            <BLayer src={`${SCENE}/palace-far.webp`} f={0} opacity={0.5} pos={{ left: '50%', bottom: '30%', width: '150%', transform: 'translateX(-50%)' }} />
+            <BLayer src={`${SCENE}/palace.webp`} f={0} opacity={0.8} pos={{ left: '50%', bottom: '26%', width: '74%', transform: 'translateX(-50%)' }} />
+            <BLayer src={`${SCENE}/lanterns-sky.webp`} f={0} opacity={0.45} pos={{ left: '50%', top: '0%', width: '100%', transform: 'translateX(-50%)' }} />
+          </>
+        )}
         {/* legibility scrim */}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(14,10,6,0.5) 0%, rgba(14,10,6,0.86) 52%, rgba(14,10,6,0.97) 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(14,10,6,0.45) 0%, rgba(14,10,6,0.84) 52%, rgba(14,10,6,0.96) 100%)' }} />
         <div style={{ position: 'absolute', inset: 0, background: tint, mixBlendMode: 'overlay' }} />
       </div>
 
