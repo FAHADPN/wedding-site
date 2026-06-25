@@ -19,13 +19,22 @@ export default function MusicPlayer() {
     setMuted(savedMuted)
     a.muted = savedMuted
 
-    const play = () => a.play().catch(() => {})
-    play() // try immediately — succeeds where the browser permits autoplay
-
-    const onGesture = () => { if (!mutedRef.current) play(); removeGestures() }
-    const events = ['pointerdown', 'touchstart', 'keydown']
-    const removeGestures = () => events.forEach((e) => window.removeEventListener(e, onGesture))
+    const events = ['pointerdown', 'touchstart', 'keydown', 'click']
+    let removed = false
+    const removeGestures = () => {
+      if (removed) return
+      removed = true
+      events.forEach((e) => window.removeEventListener(e, onGesture))
+    }
+    // retry on EVERY gesture until playback actually starts; only then stop listening
+    const onGesture = () => {
+      if (mutedRef.current) return
+      a.play().then(removeGestures).catch(() => {})
+    }
     events.forEach((e) => window.addEventListener(e, onGesture, { passive: true }))
+    // try immediately — succeeds on return visits / where the browser already allows it
+    a.play().then(removeGestures).catch(() => {})
+    const play = () => a.play().catch(() => {})
 
     // pause when the guest leaves the tab/app, resume on return (unless they muted)
     const onVisibility = () => {
