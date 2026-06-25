@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import Loader from './Loader'
 
 const Countdown = dynamic(() => import('./Countdown'), { ssr: false })
 const Rsvp = dynamic(() => import('./Rsvp'), { ssr: false })
@@ -74,6 +75,27 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
   const [ready, setReady] = useState(false)
   const [desktop, setDesktop] = useState(false)
   const [toast, setToast] = useState('')
+  const [loaded, setLoaded] = useState(false)
+
+  // preload this side's backdrop assets, then lift the loading screen
+  useEffect(() => {
+    const desk = window.matchMedia('(min-width: 1024px)').matches
+    const srcs = [
+      desk ? 'sky-wide.webp' : 'sky.webp',
+      'palace.webp', 'lanterns-sky.webp', `florals-${side}.webp`,
+      ...(desk ? [] : ['palace-far.webp']),
+    ]
+    let left = srcs.length, done = false
+    const finish = () => { if (!done) { done = true; setLoaded(true) } }
+    srcs.forEach((s) => {
+      const img = new window.Image()
+      const tick = () => { if (--left <= 0) finish() }
+      img.onload = tick; img.onerror = tick
+      img.src = `${SCENE}/${s}`
+    })
+    const fb = setTimeout(finish, 4000)
+    return () => clearTimeout(fb)
+  }, [side])
   const t = T[lang]
   const isMl = lang === 'ml'
   const bodyFont = isMl ? 'var(--font-noto-ml)' : 'var(--font-cormorant)'
@@ -318,6 +340,11 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
             </div>
           </Reveal>
         </section>
+      </div>
+
+      {/* loading screen (lifts when this side's assets are ready) */}
+      <div aria-hidden={loaded} style={{ position: 'fixed', inset: 0, zIndex: 70, background: '#0e0a06', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: loaded ? 0 : 1, visibility: loaded ? 'hidden' : 'visible', transition: 'opacity 0.8s ease, visibility 0.8s', pointerEvents: loaded ? 'none' : 'auto' }}>
+        {!loaded && <Loader />}
       </div>
 
       {/* toast */}

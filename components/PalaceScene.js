@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Loader from './Loader'
 
 /* Layered parallax "Mughal palace" scene — the site's front door.
    Pure atmosphere → choose-your-side → bride/groom. */
@@ -184,8 +185,10 @@ export default function PalaceScene() {
         </div>
       </div>
 
-      {/* cinematic curtain that lifts once everything is loaded */}
-      <div className="scene-curtain" aria-hidden="true" />
+      {/* loading screen that lifts once everything is loaded */}
+      <div className="scene-curtain" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {!ready && <Loader />}
+      </div>
 
       {/* entry cue */}
       <button

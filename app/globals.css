@@ -222,6 +222,20 @@ body {
   .layer-fade, .scene-curtain { transition: none; }
 }
 
+/* ─── Loading spinner ────────────────────────────────────── */
+@keyframes spin360 { to { transform: rotate(360deg); } }
+.gold-spinner {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 168, 76, 0.18);
+  border-top-color: #e8d5a3;
+  animation: spin360 0.9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gold-spinner { animation-duration: 1.8s; }
+}
+
 /* ─── Scene entry cue ────────────────────────────────────── */
 .scene-cue {
   opacity: 0;
