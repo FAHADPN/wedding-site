@@ -143,8 +143,8 @@ export default function PalaceScene() {
         <>
           <Layer src={`${SCENE}/sky-wide.webp`} z={0} f={3} order={0} cover objPos="center" pos={{ inset: 0 }} />
           {/* soft warm haze so the palace emerges from the night instead of sitting as a cutout */}
-          <div className="layer-fade" aria-hidden="true" style={{ position: 'absolute', zIndex: 0, left: '50%', bottom: '8%', width: '52%', height: '60%', transform: 'translateX(-50%)', pointerEvents: 'none', background: 'radial-gradient(ellipse at 50% 70%, rgba(214,150,70,0.22) 0%, rgba(150,90,40,0.1) 38%, transparent 68%)', filter: 'blur(12px)' }} />
-          <Layer src={`${SCENE}/palace.webp`} z={1} f={10} order={1} filter="blur(0.8px) saturate(0.96) brightness(0.97)" mask="linear-gradient(180deg, transparent 0%, #000 15%, #000 86%, transparent 100%)" pos={{ left: '50%', bottom: '12%', width: '42%', transform: 'translateX(-50%)' }} />
+          <div className="layer-fade" aria-hidden="true" style={{ position: 'absolute', zIndex: 0, left: '50%', bottom: '6%', width: '68%', height: '70%', transform: 'translateX(-50%)', pointerEvents: 'none', background: 'radial-gradient(ellipse at 50% 70%, rgba(214,150,70,0.22) 0%, rgba(150,90,40,0.1) 38%, transparent 68%)', filter: 'blur(12px)' }} />
+          <Layer src={`${SCENE}/palace.webp`} z={1} f={10} order={1} filter="blur(0.8px) saturate(0.96) brightness(0.97)" mask="linear-gradient(180deg, transparent 0%, #000 7%, #000 86%, transparent 100%)" pos={{ left: '50%', bottom: '10%', width: '60%', transform: 'translateX(-50%)' }} />
           <Layer src={`${SCENE}/lanterns-sky.webp`} z={2} f={20} order={2} float pos={{ left: '23%', top: '9%', width: '34%', transform: 'translateX(-50%)' }} />
           <Layer src={`${SCENE}/lanterns-sky.webp`} z={2} f={16} order={2} float pos={{ left: '50%', top: '3%', width: '42%', transform: 'translateX(-50%)' }} />
           <Layer src={`${SCENE}/lanterns-sky.webp`} z={2} f={13} order={2} float pos={{ left: '78%', top: '7%', width: '32%', transform: 'translateX(-50%)' }} />
