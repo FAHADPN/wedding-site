@@ -95,8 +95,9 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
     const onTouch = (e) => { if (e.touches[0]) mv(e.touches[0].clientX, e.touches[0].clientY, performance.now()) }
     const onOrient = (e) => { if (e.gamma == null) return; tx = Math.max(-1, Math.min(1, e.gamma / 28)); ty = Math.max(-1, Math.min(1, ((e.beta || 45) - 45) / 28)); last = performance.now() }
     const loop = (tm) => {
-      if (tm - last > 1800) { tx = Math.sin(tm / 4600) * 0.5; ty = Math.cos(tm / 6000) * 0.3 }
-      px += (tx - px) * 0.05; py += (ty - py) * 0.05
+      // when idle, ease back to dead-centre (no drift on content pages)
+      if (tm - last > 1400) { tx = 0; ty = 0 }
+      px += (tx - px) * 0.06; py += (ty - py) * 0.06
       root.style.setProperty('--mx', px.toFixed(4)); root.style.setProperty('--my', py.toFixed(4))
       raf = requestAnimationFrame(loop)
     }
@@ -136,8 +137,8 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
 
         {/* hero — garland + florals frame only this section, then scroll away */}
         <section style={{ position: 'relative', overflow: 'hidden', minHeight: '100dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '90px 18px 40px' }}>
-          <BLayer src={`${SCENE}/garland-top.webp`} f={16} z={0} pos={{ left: '50%', top: '0', width: '118%', transform: 'translateX(-50%)' }} />
-          <BLayer src={`${SCENE}/florals-${side}.webp`} f={24} z={0} opacity={0.95} pos={{ left: '50%', bottom: '0', width: '116%', transform: 'translateX(-50%)' }} />
+          <BLayer src={`${SCENE}/garland-top.webp`} f={8} z={0} pos={{ left: '50%', top: '0', width: '118%', transform: 'translateX(-50%)' }} />
+          <BLayer src={`${SCENE}/florals-${side}.webp`} f={12} z={0} opacity={0.95} pos={{ left: '50%', bottom: '0', width: '116%', transform: 'translateX(-50%)' }} />
 
           <div style={{ position: 'relative', zIndex: 1 }}>
             <div className="arabic anim-shimmer" lang="ar" aria-label="Bismillāh ir-Raḥmān ir-Raḥīm" style={{ color: GOLD, fontSize: 'clamp(1.5rem, 7vw, 2.6rem)', lineHeight: 1.3, marginBottom: '22px', maxWidth: '100%' }}>﷽</div>
