@@ -207,7 +207,7 @@ export default function SidePage({ side, T, mapsUrl, targetDate }) {
 
       {/* ── nav ── */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px' }}>
-        <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', minHeight: '40px', padding: '8px 14px', borderRadius: '999px', background: 'rgba(10,7,4,0.62)', border: '1px solid rgba(201,168,76,0.4)', color: GOLD, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.2em', textDecoration: 'none', backdropFilter: 'blur(3px)', fontFamily: isMl ? 'var(--font-noto-ml)' : undefined }}>{t.back}</Link>
+        <Link href="/?s=1" style={{ display: 'inline-flex', alignItems: 'center', minHeight: '40px', padding: '8px 14px', borderRadius: '999px', background: 'rgba(10,7,4,0.62)', border: '1px solid rgba(201,168,76,0.4)', color: GOLD, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.2em', textDecoration: 'none', backdropFilter: 'blur(3px)', fontFamily: isMl ? 'var(--font-noto-ml)' : undefined }}>{t.back}</Link>
         <button onClick={() => setLang((l) => (l === 'en' ? 'ml' : 'en'))} style={{ minHeight: '40px', color: GOLD, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.2em', background: 'rgba(10,7,4,0.62)', border: '1px solid rgba(201,168,76,0.4)', borderRadius: '999px', padding: '8px 16px', cursor: 'pointer', backdropFilter: 'blur(3px)', fontFamily: isMl ? 'var(--font-noto-ml)' : undefined }}>{t.lang}</button>
       </nav>
 
