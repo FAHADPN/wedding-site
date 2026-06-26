@@ -93,6 +93,17 @@ export default function PalaceScene() {
     return () => mq.removeEventListener('change', apply)
   }, [])
 
+  /* if the guest already opened the invitation this session (e.g. tapped a side then
+     pressed Back), skip the "tap to open" splash and show the scene directly */
+  useEffect(() => {
+    try { if (sessionStorage.getItem('fn-opened')) setOpened(true) } catch {}
+  }, [])
+
+  const open = () => {
+    setOpened(true)
+    try { sessionStorage.setItem('fn-opened', '1') } catch {}
+  }
+
   /* preload the layers for this viewport, then trigger the staggered entrance */
   useEffect(() => {
     const desk = window.matchMedia('(min-width: 1024px)').matches
@@ -192,8 +203,8 @@ export default function PalaceScene() {
         role={ready && !opened ? 'button' : undefined}
         tabIndex={ready && !opened ? 0 : undefined}
         aria-label={ready && !opened ? 'Tap to open the invitation' : undefined}
-        onClick={() => { if (ready) setOpened(true) }}
-        onKeyDown={(e) => { if (ready && (e.key === 'Enter' || e.key === ' ')) setOpened(true) }}
+        onClick={() => { if (ready) open() }}
+        onKeyDown={(e) => { if (ready && (e.key === 'Enter' || e.key === ' ')) open() }}
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: ready && !opened ? 'pointer' : 'default', pointerEvents: opened ? 'none' : 'auto' }}
       >
         {!ready ? (
