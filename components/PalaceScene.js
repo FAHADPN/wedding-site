@@ -93,16 +93,22 @@ export default function PalaceScene() {
     return () => mq.removeEventListener('change', apply)
   }, [])
 
-  /* if the guest already opened the invitation this session (e.g. tapped a side then
-     pressed Back), skip the "tap to open" splash and show the scene directly */
+  /* fresh load/reload shows the "tap to open" splash; returning from a side page skips it
+     (the Back link adds ?s=1, and the browser back/forward button also counts) */
   useEffect(() => {
-    try { if (sessionStorage.getItem('fn-opened')) setOpened(true) } catch {}
+    let skip = false
+    try {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('s') === '1') { skip = true; window.history.replaceState(null, '', '/') }
+    } catch {}
+    try {
+      const nav = performance.getEntriesByType('navigation')[0]
+      if (nav && nav.type === 'back_forward') skip = true
+    } catch {}
+    if (skip) setOpened(true)
   }, [])
 
-  const open = () => {
-    setOpened(true)
-    try { sessionStorage.setItem('fn-opened', '1') } catch {}
-  }
+  const open = () => setOpened(true)
 
   /* preload the layers for this viewport, then trigger the staggered entrance */
   useEffect(() => {
